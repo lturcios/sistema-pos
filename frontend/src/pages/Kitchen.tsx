@@ -58,7 +58,7 @@ export default function Kitchen() {
     const renderCard = (item: OrderItem, nextStatus: string | null, buttonText: string, buttonColor: string) => {
         const timeElapsed = Math.floor((new Date().getTime() - new Date(item.createdAt).getTime()) / 60000);
         return (
-            <div key={item.id} className="bg-card text-card-foreground brutal-border p-4 shadow-[4px_4px_0_0_rgba(0,0,0,0.2)] flex flex-col gap-3">
+            <div key={item.id} className="bg-card text-card-foreground border border-border/50 rounded-xl p-4 shadow-sm flex flex-col gap-3">
                 <div className="flex justify-between items-start border-b pb-2">
                     <h3 className="font-black text-lg uppercase leading-tight">{Number(item.qty)}x {item.productSale.name}</h3>
                     <span className={`text-xs font-bold px-2 py-1 ${timeElapsed > 15 ? 'bg-destructive text-destructive-foreground animate-pulse' : 'bg-muted text-muted-foreground'}`}>
@@ -91,7 +91,7 @@ export default function Kitchen() {
 
     return (
         <div className="h-full flex flex-col p-4 bg-background overflow-hidden">
-            <div className="flex items-center justify-between mb-6 pb-4 border-b-4 border-foreground">
+            <div className="flex items-center justify-between mb-6 pb-4 border-b-2 border-border/50">
                 <h1 className="text-4xl font-black uppercase tracking-widest flex items-center gap-4">
                     <ChefHat className="h-10 w-10 text-primary" />
                     Monitor de Cocina (KDS)
@@ -104,7 +104,7 @@ export default function Kitchen() {
 
             <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-6 overflow-hidden">
                 {/* COLUMNA: SOLICITADOS */}
-                <div className="flex flex-col border-4 border-foreground bg-muted/20">
+                <div className="flex flex-col border border-border/50 rounded-2xl bg-muted/20 overflow-hidden">
                     <div className="bg-foreground text-background p-4 flex justify-between items-center">
                         <h2 className="font-black text-xl uppercase tracking-widest flex items-center gap-2">
                             <Clock className="h-5 w-5" /> Solicitados
@@ -117,7 +117,7 @@ export default function Kitchen() {
                 </div>
 
                 {/* COLUMNA: EN PREPARACIÓN */}
-                <div className="flex flex-col border-4 border-foreground bg-blue-50/50">
+                <div className="flex flex-col border border-border/50 rounded-2xl bg-blue-50/50 overflow-hidden">
                     <div className="bg-blue-600 text-white p-4 flex justify-between items-center">
                         <h2 className="font-black text-xl uppercase tracking-widest flex items-center gap-2">
                             <ChefHat className="h-5 w-5" /> En Preparación
@@ -130,7 +130,7 @@ export default function Kitchen() {
                 </div>
 
                 {/* COLUMNA: LISTOS */}
-                <div className="flex flex-col border-4 border-foreground bg-emerald-50/50">
+                <div className="flex flex-col border border-border/50 rounded-2xl bg-emerald-50/50 overflow-hidden">
                     <div className="bg-emerald-600 text-white p-4 flex justify-between items-center">
                         <h2 className="font-black text-xl uppercase tracking-widest flex items-center gap-2">
                             <CheckCircle2 className="h-5 w-5" /> Listos / Esperando

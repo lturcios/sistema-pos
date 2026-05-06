@@ -272,17 +272,17 @@ export default function Inventory() {
     return (
         <div className="p-6 h-full flex flex-col bg-muted/10 relative">
 
-            <div className="flex justify-between items-end mb-6">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Inventario Físico</h1>
-                    <p className="text-muted-foreground mt-1">Gestión de existencias materiales, traslados y tomas físicas.</p>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-4">
+                <div className="w-full md:w-auto">
+                    <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Inventario Físico</h1>
+                    <p className="text-muted-foreground mt-1 text-sm md:text-base">Gestión de existencias materiales, traslados y tomas físicas.</p>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
                     {branches.length > 0 && (
                         <select
                             value={selectedBranchId} onChange={e => setSelectedBranchId(e.target.value)}
-                            className="border rounded-md px-3 py-2 text-sm bg-background shadow-sm max-w-[200px]"
+                            className="border rounded-md px-3 py-2 text-sm bg-background shadow-sm w-full md:w-auto md:max-w-[200px]"
                         >
                             {branches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
                         </select>
@@ -291,28 +291,28 @@ export default function Inventory() {
                     {/* Acciones */}
                     {activeTab === 'stock' && (
                         <>
-                            <button onClick={fetchStock} className="flex items-center gap-2 bg-secondary text-secondary-foreground px-4 py-2 rounded-md font-medium hover:bg-secondary/80 outline outline-1 outline-border">
+                            <button onClick={fetchStock} className="flex-1 md:flex-none justify-center flex items-center gap-2 bg-secondary text-secondary-foreground px-4 py-2 rounded-md font-medium hover:bg-secondary/80 outline outline-1 outline-border">
                                 <Search className="h-4 w-4" /> Recargar
                             </button>
                             {hasPermission('inventory', 'adjust') && (
-                                <button onClick={() => setShowAdjustModal(true)} className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md font-medium hover:bg-primary/90 shadow-sm">
-                                    <Edit3 className="h-4 w-4" /> Ajuste Manual / Compra
+                                <button onClick={() => setShowAdjustModal(true)} className="flex-1 md:flex-none justify-center flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md font-medium hover:bg-primary/90 shadow-sm">
+                                    <Edit3 className="h-4 w-4" /> Ajuste / Compra
                                 </button>
                             )}
                         </>
                     )}
                     {activeTab === 'movements' && (
-                        <button onClick={fetchMovements} className="flex items-center gap-2 bg-secondary text-secondary-foreground px-4 py-2 rounded-md font-medium hover:bg-secondary/80 outline outline-1 outline-border">
+                        <button onClick={fetchMovements} className="flex-1 md:flex-none justify-center flex items-center gap-2 bg-secondary text-secondary-foreground px-4 py-2 rounded-md font-medium hover:bg-secondary/80 outline outline-1 outline-border">
                             <Search className="h-4 w-4" /> Recargar Historial
                         </button>
                     )}
                     {activeTab === 'transfers' && (
                         <>
-                            <button onClick={fetchMovements} className="flex items-center gap-2 bg-secondary text-secondary-foreground px-4 py-2 rounded-md font-medium hover:bg-secondary/80 outline outline-1 outline-border mr-2">
+                            <button onClick={fetchMovements} className="flex-1 md:flex-none justify-center flex items-center gap-2 bg-secondary text-secondary-foreground px-4 py-2 rounded-md font-medium hover:bg-secondary/80 outline outline-1 outline-border">
                                 <Search className="h-4 w-4" /> Recargar
                             </button>
                             {hasPermission('inventory', 'transfer') && (
-                                <button onClick={() => { fetchPhysicalProducts(); setShowTransferModal(true); }} className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md font-medium hover:bg-primary/90">
+                                <button onClick={() => { fetchPhysicalProducts(); setShowTransferModal(true); }} className="flex-1 md:flex-none justify-center flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md font-medium hover:bg-primary/90">
                                     <Plus className="h-4 w-4" /> Nuevo Traslado
                                 </button>
                             )}
@@ -320,11 +320,11 @@ export default function Inventory() {
                     )}
                     {activeTab === 'counts' && (
                         <>
-                            <button onClick={fetchCounts} className="flex items-center gap-2 bg-secondary text-secondary-foreground px-4 py-2 rounded-md font-medium hover:bg-secondary/80 outline outline-1 outline-border">
+                            <button onClick={fetchCounts} className="flex-1 md:flex-none justify-center flex items-center gap-2 bg-secondary text-secondary-foreground px-4 py-2 rounded-md font-medium hover:bg-secondary/80 outline outline-1 outline-border">
                                 <Search className="h-4 w-4" /> Recargar
                             </button>
                             {hasPermission('inventory', 'count') && (
-                                <button onClick={handleInitCount} className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md font-medium hover:bg-primary/90">
+                                <button onClick={handleInitCount} className="flex-1 md:flex-none justify-center flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md font-medium hover:bg-primary/90">
                                     <Plus className="h-4 w-4" /> Ejecutar Conteo Ciego
                                 </button>
                             )}
@@ -334,17 +334,17 @@ export default function Inventory() {
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-1 border-b mb-6 border-border shrink-0">
-                <button onClick={() => setActiveTab('stock')} className={`flex items-center gap-2 px-4 py-2 border-b-2 font-medium transition-colors ${activeTab === 'stock' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}>
+            <div className="flex flex-wrap gap-x-6 gap-y-2 border-b mb-6 border-border shrink-0">
+                <button onClick={() => setActiveTab('stock')} className={`whitespace-nowrap flex items-center gap-2 px-2 pb-2 border-b-2 font-medium transition-colors ${activeTab === 'stock' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}>
                     <Package className="h-4 w-4" /> Kardex de Existencias
                 </button>
-                <button onClick={() => setActiveTab('transfers')} className={`flex items-center gap-2 px-4 py-2 border-b-2 font-medium transition-colors ${activeTab === 'transfers' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}>
+                <button onClick={() => setActiveTab('transfers')} className={`whitespace-nowrap flex items-center gap-2 px-2 pb-2 border-b-2 font-medium transition-colors ${activeTab === 'transfers' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}>
                     <ArrowRightLeft className="h-4 w-4" /> Traslados Internos
                 </button>
-                <button onClick={() => setActiveTab('counts')} className={`flex items-center gap-2 px-4 py-2 border-b-2 font-medium transition-colors ${activeTab === 'counts' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}>
+                <button onClick={() => setActiveTab('counts')} className={`whitespace-nowrap flex items-center gap-2 px-2 pb-2 border-b-2 font-medium transition-colors ${activeTab === 'counts' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}>
                     <ClipboardList className="h-4 w-4" /> Tomas Físicas Ciega
                 </button>
-                <button onClick={() => setActiveTab('movements')} className={`flex items-center gap-2 px-4 py-2 border-b-2 font-medium transition-colors ${activeTab === 'movements' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}>
+                <button onClick={() => setActiveTab('movements')} className={`whitespace-nowrap flex items-center gap-2 px-2 pb-2 border-b-2 font-medium transition-colors ${activeTab === 'movements' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}>
                     <History className="h-4 w-4" /> Historial / Kardex
                 </button>
             </div>
@@ -374,52 +374,104 @@ export default function Inventory() {
                             </div>
                         </div>
                         <div className="flex-1 overflow-auto">
-                            <table className="w-full text-sm text-left">
-                                <thead className="bg-muted text-muted-foreground uppercase text-xs sticky top-0 z-10 shadow-sm">
-                                    <tr>
-                                        <th className="px-6 py-3 font-semibold w-32">SKU</th>
-                                        <th className="px-6 py-3 font-semibold">Descripción del Insumo Físico</th>
-                                        <th className="px-6 py-3 font-semibold">Base U.M.</th>
-                                        <th className="px-6 py-3 font-semibold text-right">Existencia Actual</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y">
-                                    {filteredStock.map(s => (
-                                        <tr key={s.id} className="hover:bg-muted/50 transition-colors">
-                                            <td className="px-6 py-4 font-mono font-medium">{s.productPhysical.sku}</td>
-                                            <td className="px-6 py-4 font-bold text-foreground">{s.productPhysical.description}</td>
-                                            <td className="px-6 py-4 text-muted-foreground">{s.productPhysical.unitMeasure}</td>
-                                            <td className="px-6 py-4 text-right">
-                                                <span className={`font-bold px-2 py-1 rounded text-sm ${(() => {
-                                                    const qty = Number(s.quantity);
-                                                    const min = Number(s.productPhysical.minStock || 0);
-                                                    if (min === 0) {
-                                                        return qty <= 0 ? 'bg-destructive/10 text-destructive' : 'bg-muted text-foreground';
-                                                    }
-                                                    const ratio = min > 0 ? qty / min : 0;
-                                                    if (ratio >= 1.5) return 'bg-emerald-500/10 text-emerald-600';
-                                                    if (ratio >= 1.25) return 'bg-yellow-500/20 text-yellow-700';
-                                                    if (ratio > 1.00) return 'bg-orange-500/20 text-orange-600';
-                                                    if (ratio > 0.50) return 'bg-rose-400/20 text-rose-500';
-                                                    return 'bg-destructive/20 text-destructive';
-                                                })()
-                                                    }`}>
-                                                    {Number(s.quantity).toFixed(2)}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                    {filteredStock.length === 0 && !loading && (
+                            {/* Desktop Table View */}
+                            <div className="hidden md:block h-full">
+                                <table className="w-full text-sm text-left">
+                                    <thead className="bg-muted text-muted-foreground uppercase text-xs sticky top-0 z-10 shadow-sm">
                                         <tr>
-                                            <td colSpan={5} className="py-12 text-center text-muted-foreground">
-                                                <Package className="h-12 w-12 mx-auto mb-3 opacity-20" />
-                                                <p>No se encontraron datos de stock en la sucursal seleccionada.</p>
-                                                <p className="text-xs">Usa el botón "Ajuste Manual / Compra" para alimentarlo.</p>
-                                            </td>
+                                            <th className="px-6 py-3 font-semibold w-32">SKU</th>
+                                            <th className="px-6 py-3 font-semibold">Descripción del Insumo Físico</th>
+                                            <th className="px-6 py-3 font-semibold">Base U.M.</th>
+                                            <th className="px-6 py-3 font-semibold text-right">Existencia Actual</th>
                                         </tr>
-                                    )}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody className="divide-y">
+                                        {filteredStock.map(s => (
+                                            <tr key={s.id} className="hover:bg-muted/50 transition-colors">
+                                                <td className="px-6 py-4 font-mono font-medium">{s.productPhysical.sku}</td>
+                                                <td className="px-6 py-4 font-bold text-foreground">{s.productPhysical.description}</td>
+                                                <td className="px-6 py-4 text-muted-foreground">{s.productPhysical.unitMeasure}</td>
+                                                <td className="px-6 py-4 text-right">
+                                                    <span className={`font-bold px-2 py-1 rounded text-sm ${(() => {
+                                                        const qty = Number(s.quantity);
+                                                        const min = Number(s.productPhysical.minStock || 0);
+                                                        if (min === 0) {
+                                                            return qty <= 0 ? 'bg-destructive/10 text-destructive' : 'bg-muted text-foreground';
+                                                        }
+                                                        const ratio = min > 0 ? qty / min : 0;
+                                                        if (ratio >= 1.5) return 'bg-emerald-500/10 text-emerald-600';
+                                                        if (ratio >= 1.25) return 'bg-yellow-500/20 text-yellow-700';
+                                                        if (ratio > 1.00) return 'bg-orange-500/20 text-orange-600';
+                                                        if (ratio > 0.50) return 'bg-rose-400/20 text-rose-500';
+                                                        return 'bg-destructive/20 text-destructive';
+                                                    })()
+                                                        }`}>
+                                                        {Number(s.quantity).toFixed(2)}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                        {filteredStock.length === 0 && !loading && (
+                                            <tr>
+                                                <td colSpan={5} className="py-12 text-center text-muted-foreground">
+                                                    <Package className="h-12 w-12 mx-auto mb-3 opacity-20" />
+                                                    <p>No se encontraron datos de stock en la sucursal seleccionada.</p>
+                                                    <p className="text-xs">Usa el botón "Ajuste / Compra" para alimentarlo.</p>
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            {/* Mobile Card View */}
+                            <div className="md:hidden flex flex-col gap-3 p-4 bg-muted/5">
+                                {filteredStock.map(s => {
+                                    const qty = Number(s.quantity);
+                                    const min = Number(s.productPhysical.minStock || 0);
+                                    let statusColor = 'bg-muted text-foreground';
+                                    let borderStatus = 'border-border';
+                                    
+                                    if (min === 0) {
+                                        if (qty <= 0) { statusColor = 'bg-destructive/10 text-destructive'; borderStatus = 'border-destructive'; }
+                                    } else {
+                                        const ratio = qty / min;
+                                        if (ratio >= 1.5) { statusColor = 'bg-emerald-500/10 text-emerald-600'; borderStatus = 'border-emerald-500'; }
+                                        else if (ratio >= 1.25) { statusColor = 'bg-yellow-500/20 text-yellow-700'; borderStatus = 'border-yellow-500'; }
+                                        else if (ratio > 1.00) { statusColor = 'bg-orange-500/20 text-orange-600'; borderStatus = 'border-orange-500'; }
+                                        else if (ratio > 0.50) { statusColor = 'bg-rose-400/20 text-rose-500'; borderStatus = 'border-rose-400'; }
+                                        else { statusColor = 'bg-destructive/20 text-destructive'; borderStatus = 'border-destructive'; }
+                                    }
+
+                                    return (
+                                        <div key={s.id} className="bg-background border rounded-xl p-4 shadow-sm relative overflow-hidden flex flex-col gap-2">
+                                            <div className={`absolute left-0 top-0 bottom-0 w-1 ${borderStatus}`} />
+                                            <div className="flex justify-between items-start">
+                                                <div>
+                                                    <h3 className="font-bold text-base leading-tight pr-2">{s.productPhysical.description}</h3>
+                                                    <p className="text-[10px] text-muted-foreground font-mono mt-1 tracking-widest">{s.productPhysical.sku}</p>
+                                                </div>
+                                                <div className="text-right">
+                                                    <span className="block text-[10px] uppercase font-bold text-muted-foreground mb-1 tracking-wider">Existencia</span>
+                                                    <span className={`font-black px-2 py-1 rounded text-lg ${statusColor}`}>
+                                                        {qty.toFixed(2)}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="flex justify-between items-center mt-2 pt-2 border-t">
+                                                <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">U. Medida: {s.productPhysical.unitMeasure}</span>
+                                                <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Mínimo: {min.toFixed(2)}</span>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                                {filteredStock.length === 0 && !loading && (
+                                    <div className="text-center py-12 text-muted-foreground border-2 border-dashed rounded-xl border-border">
+                                        <Package className="h-10 w-10 mx-auto mb-2 opacity-20" />
+                                        <p className="font-bold text-sm">Sin datos de stock</p>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 )}
@@ -443,51 +495,104 @@ export default function Inventory() {
                             </div>
                         </div>
                         <div className="flex-1 overflow-auto">
-                            <table className="w-full text-sm text-left">
-                                <thead className="bg-muted text-muted-foreground uppercase text-xs sticky top-0 z-10 shadow-sm">
-                                    <tr>
-                                        <th className="px-6 py-3 font-semibold w-40">Fecha</th>
-                                        <th className="px-6 py-3 font-semibold">SKU</th>
-                                        <th className="px-6 py-3 font-semibold">Insumo Físico</th>
-                                        <th className="px-6 py-3 font-semibold">Tipo Mov.</th>
-                                        <th className="px-6 py-3 font-semibold">Referencia</th>
-                                        <th className="px-6 py-3 font-semibold text-right">Cant. Afec.</th>
-                                        <th className="px-6 py-3 font-semibold text-right">Costo Mov.</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y">
-                                    {movements.map(m => (
-                                        <tr key={m.id} className="hover:bg-muted/50 transition-colors">
-                                            <td className="px-6 py-4 font-mono text-xs">{new Date(m.date).toLocaleString()}</td>
-                                            <td className="px-6 py-4 font-mono font-medium">{m.productPhysical.sku}</td>
-                                            <td className="px-6 py-4 font-bold text-foreground">{m.productPhysical.description}</td>
-                                            <td className="px-6 py-4">
-                                                <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider ${m.type === 'IN' || m.type === 'ADJUSTMENT' && Number(m.qty) > 0 ? 'bg-emerald-500/10 text-emerald-600' :
-                                                    m.type === 'SALE' || m.type === 'OUT' || (m.type === 'ADJUSTMENT' && Number(m.qty) < 0) ? 'bg-rose-500/10 text-rose-600' :
-                                                        'bg-blue-500/10 text-blue-600'
-                                                    }`}>
-                                                    {m.type}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 text-muted-foreground">{m.reference || '-'}</td>
-                                            <td className={`px-6 py-4 text-right font-bold ${Number(m.qty) > 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
-                                                {Number(m.qty) > 0 ? '+' : ''}{Number(m.qty).toFixed(2)}
-                                            </td>
-                                            <td className="px-6 py-4 text-right font-mono text-muted-foreground">
-                                                ${Number(m.cost).toFixed(2)}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                    {movements.length === 0 && !loading && (
+                            {/* Desktop Table View */}
+                            <div className="hidden md:block h-full">
+                                <table className="w-full text-sm text-left">
+                                    <thead className="bg-muted text-muted-foreground uppercase text-xs sticky top-0 z-10 shadow-sm">
                                         <tr>
-                                            <td colSpan={7} className="py-12 text-center text-muted-foreground">
-                                                <History className="h-12 w-12 mx-auto mb-3 opacity-20" />
-                                                <p>No se encontraron movimientos o transacciones en el Kardex.</p>
-                                            </td>
+                                            <th className="px-6 py-3 font-semibold w-40">Fecha</th>
+                                            {/* Reference Column omitted globally per request, SKU demoted below */}
+                                            <th className="px-6 py-3 font-semibold">SKU / Insumo Físico</th>
+                                            <th className="px-6 py-3 font-semibold">Tipo Mov.</th>
+                                            <th className="px-6 py-3 font-semibold text-right">Cant. Afec.</th>
+                                            <th className="px-6 py-3 font-semibold text-right">Costo Mov.</th>
                                         </tr>
-                                    )}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody className="divide-y">
+                                        {movements.map(m => (
+                                            <tr key={m.id} className="hover:bg-muted/50 transition-colors">
+                                                <td className="px-6 py-4 font-mono text-xs">{new Date(m.date).toLocaleString()}</td>
+                                                <td className="px-6 py-4">
+                                                    <div className="font-bold text-foreground">{m.productPhysical.description}</div>
+                                                    <div className="text-[10px] text-muted-foreground font-mono mt-0.5">{m.productPhysical.sku}</div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider ${m.type === 'IN' || m.type === 'ADJUSTMENT' && Number(m.qty) > 0 ? 'bg-emerald-500/10 text-emerald-600' :
+                                                        m.type === 'SALE' || m.type === 'OUT' || (m.type === 'ADJUSTMENT' && Number(m.qty) < 0) ? 'bg-rose-500/10 text-rose-600' :
+                                                            'bg-blue-500/10 text-blue-600'
+                                                        }`}>
+                                                        {m.type}
+                                                    </span>
+                                                </td>
+                                                <td className={`px-6 py-4 text-right font-bold ${Number(m.qty) > 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                                                    {Number(m.qty) > 0 ? '+' : ''}{Number(m.qty).toFixed(2)}
+                                                </td>
+                                                <td className="px-6 py-4 text-right font-mono text-muted-foreground">
+                                                    ${Number(m.cost).toFixed(2)}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                        {movements.length === 0 && !loading && (
+                                            <tr>
+                                                <td colSpan={5} className="py-12 text-center text-muted-foreground">
+                                                    <History className="h-12 w-12 mx-auto mb-3 opacity-20" />
+                                                    <p>No se encontraron movimientos o transacciones en el Kardex.</p>
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            {/* Mobile Card View */}
+                            <div className="md:hidden flex flex-col gap-3 p-4 bg-muted/5">
+                                {movements.map(m => {
+                                    const qty = Number(m.qty);
+                                    const isPositive = m.type === 'IN' || (m.type === 'ADJUSTMENT' && qty > 0);
+                                    const isNegative = m.type === 'SALE' || m.type === 'OUT' || (m.type === 'ADJUSTMENT' && qty < 0);
+                                    
+                                    const typeColor = isPositive ? 'bg-emerald-500/10 text-emerald-600' : 
+                                                      isNegative ? 'bg-rose-500/10 text-rose-600' : 'bg-blue-500/10 text-blue-600';
+                                    
+                                    const borderColor = isPositive ? 'border-emerald-500' : 
+                                                        isNegative ? 'border-rose-500' : 'border-blue-500';
+
+                                    return (
+                                        <div key={m.id} className="bg-background border rounded-xl p-4 shadow-sm relative overflow-hidden flex flex-col gap-2">
+                                            <div className={`absolute left-0 top-0 bottom-0 w-1 ${borderColor}`} />
+                                            <div className="flex justify-between items-start">
+                                                <div>
+                                                    <p className="text-xs text-muted-foreground font-mono mb-1">{new Date(m.date).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}</p>
+                                                    <h3 className="font-bold text-sm leading-tight pr-2">{m.productPhysical.description}</h3>
+                                                </div>
+                                                <div className="text-right">
+                                                    <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider whitespace-nowrap ${typeColor}`}>
+                                                        {m.type}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="flex justify-between items-end mt-2 pt-2 border-t">
+                                                <div className="text-left">
+                                                    <span className="block text-[10px] uppercase font-bold text-muted-foreground mb-0.5 tracking-wider">Costo</span>
+                                                    <span className="text-sm font-mono text-muted-foreground">${Number(m.cost).toFixed(2)}</span>
+                                                </div>
+                                                <div className="text-right">
+                                                    <span className="block text-[10px] uppercase font-bold text-muted-foreground mb-0.5 tracking-wider">Cant. Afectada</span>
+                                                    <span className={`font-black text-lg ${qty > 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                                                        {qty > 0 ? '+' : ''}{qty.toFixed(2)}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                                {movements.length === 0 && !loading && (
+                                    <div className="text-center py-12 text-muted-foreground border-2 border-dashed rounded-xl border-border">
+                                        <History className="h-10 w-10 mx-auto mb-2 opacity-20" />
+                                        <p className="font-bold text-sm">Sin movimientos</p>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 )}
@@ -499,42 +604,90 @@ export default function Inventory() {
                             <h3 className="font-medium text-sm text-muted-foreground">Últimos Traslados Emitidos/Recibidos (Kardex)</h3>
                         </div>
                         <div className="flex-1 overflow-auto">
-                            <table className="w-full text-sm text-left">
-                                <thead className="bg-muted text-muted-foreground uppercase text-xs sticky top-0 z-10 shadow-sm">
-                                    <tr>
-                                        <th className="px-6 py-3 font-semibold w-40">Fecha</th>
-                                        <th className="px-6 py-3 font-semibold">Insumo Físico</th>
-                                        <th className="px-6 py-3 font-semibold">Movimiento</th>
-                                        <th className="px-6 py-3 font-semibold text-right">Cantidad</th>
-                                        <th className="px-6 py-3 font-semibold">Referencia Destino/Origen</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y">
-                                    {movements.filter(m => m.type === 'TRANSFER').map(m => (
-                                        <tr key={m.id} className="hover:bg-muted/50 transition-colors">
-                                            <td className="px-6 py-4 font-mono text-xs">{new Date(m.date).toLocaleString()}</td>
-                                            <td className="px-6 py-4 font-bold text-foreground">[{m.productPhysical.sku}] {m.productPhysical.description}</td>
-                                            <td className="px-6 py-4">
-                                                <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider ${Number(m.qty) > 0 ? 'bg-emerald-500/10 text-emerald-600' : 'bg-rose-500/10 text-rose-600'}`}>
-                                                    {Number(m.qty) > 0 ? 'RECIBIDO (Entrada)' : 'ENVIADO (Salida)'}
-                                                </span>
-                                            </td>
-                                            <td className={`px-6 py-4 text-right font-bold ${Number(m.qty) > 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
-                                                {Number(m.qty) > 0 ? '+' : ''}{Number(m.qty).toFixed(2)}
-                                            </td>
-                                            <td className="px-6 py-4 text-muted-foreground">{m.reference}</td>
-                                        </tr>
-                                    ))}
-                                    {movements.filter(m => m.type === 'TRANSFER').length === 0 && !loading && (
+                            {/* Desktop Table View */}
+                            <div className="hidden md:block h-full">
+                                <table className="w-full text-sm text-left">
+                                    <thead className="bg-muted text-muted-foreground uppercase text-xs sticky top-0 z-10 shadow-sm">
                                         <tr>
-                                            <td colSpan={5} className="py-12 text-center text-muted-foreground">
-                                                <ArrowRightLeft className="h-12 w-12 mx-auto mb-3 opacity-20" />
-                                                <p>No existen traslados registrados en esta Sucursal.</p>
-                                            </td>
+                                            <th className="px-6 py-3 font-semibold w-40">Fecha</th>
+                                            <th className="px-6 py-3 font-semibold">Insumo Físico</th>
+                                            <th className="px-6 py-3 font-semibold">Movimiento</th>
+                                            <th className="px-6 py-3 font-semibold text-right">Cantidad</th>
+                                            <th className="px-6 py-3 font-semibold">Referencia Destino/Origen</th>
                                         </tr>
-                                    )}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody className="divide-y">
+                                        {movements.filter(m => m.type === 'TRANSFER').map(m => (
+                                            <tr key={m.id} className="hover:bg-muted/50 transition-colors">
+                                                <td className="px-6 py-4 font-mono text-xs">{new Date(m.date).toLocaleString()}</td>
+                                                <td className="px-6 py-4 font-bold text-foreground">[{m.productPhysical.sku}] {m.productPhysical.description}</td>
+                                                <td className="px-6 py-4">
+                                                    <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider ${Number(m.qty) > 0 ? 'bg-emerald-500/10 text-emerald-600' : 'bg-rose-500/10 text-rose-600'}`}>
+                                                        {Number(m.qty) > 0 ? 'RECIBIDO (Entrada)' : 'ENVIADO (Salida)'}
+                                                    </span>
+                                                </td>
+                                                <td className={`px-6 py-4 text-right font-bold ${Number(m.qty) > 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                                                    {Number(m.qty) > 0 ? '+' : ''}{Number(m.qty).toFixed(2)}
+                                                </td>
+                                                <td className="px-6 py-4 text-muted-foreground">{m.reference}</td>
+                                            </tr>
+                                        ))}
+                                        {movements.filter(m => m.type === 'TRANSFER').length === 0 && !loading && (
+                                            <tr>
+                                                <td colSpan={5} className="py-12 text-center text-muted-foreground">
+                                                    <ArrowRightLeft className="h-12 w-12 mx-auto mb-3 opacity-20" />
+                                                    <p>No existen traslados registrados en esta Sucursal.</p>
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            {/* Mobile Card View */}
+                            <div className="md:hidden flex flex-col gap-3 p-4 bg-muted/5">
+                                {movements.filter(m => m.type === 'TRANSFER').map(m => {
+                                    const qty = Number(m.qty);
+                                    const isReceived = qty > 0;
+                                    const colorClass = isReceived ? 'text-emerald-600 bg-emerald-500/10' : 'text-rose-600 bg-rose-500/10';
+                                    const borderColor = isReceived ? 'border-emerald-500' : 'border-rose-500';
+
+                                    return (
+                                        <div key={m.id} className="bg-background border rounded-xl p-4 shadow-sm relative overflow-hidden flex flex-col gap-2">
+                                            <div className={`absolute left-0 top-0 bottom-0 w-1 ${borderColor}`} />
+                                            <div className="flex justify-between items-start">
+                                                <div>
+                                                    <p className="text-xs text-muted-foreground font-mono mb-1">{new Date(m.date).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}</p>
+                                                    <h3 className="font-bold text-sm leading-tight pr-2">{m.productPhysical.description}</h3>
+                                                </div>
+                                                <div className="text-right">
+                                                    <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider whitespace-nowrap ${colorClass}`}>
+                                                        {isReceived ? 'RECIBIDO' : 'ENVIADO'}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="flex justify-between items-center mt-2 pt-2 border-t">
+                                                <div className="text-left w-2/3 pr-2">
+                                                    <span className="block text-[10px] uppercase font-bold text-muted-foreground mb-0.5 tracking-wider">Ref: {isReceived ? 'Origen' : 'Destino'}</span>
+                                                    <span className="text-xs text-muted-foreground line-clamp-1">{m.reference || 'N/A'}</span>
+                                                </div>
+                                                <div className="text-right">
+                                                    <span className="block text-[10px] uppercase font-bold text-muted-foreground mb-0.5 tracking-wider">Cantidad</span>
+                                                    <span className={`font-black text-lg ${isReceived ? 'text-emerald-600' : 'text-rose-600'}`}>
+                                                        {isReceived ? '+' : ''}{qty.toFixed(2)}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                                {movements.filter(m => m.type === 'TRANSFER').length === 0 && !loading && (
+                                    <div className="text-center py-12 text-muted-foreground border-2 border-dashed rounded-xl border-border">
+                                        <ArrowRightLeft className="h-10 w-10 mx-auto mb-2 opacity-20" />
+                                        <p className="font-bold text-sm">Sin traslados en la sucursal</p>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 )}

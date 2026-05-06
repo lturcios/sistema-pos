@@ -18,7 +18,8 @@ export default function Reports() {
     const [branchId, setBranchId] = useState<string>('');
     const [branches, setBranches] = useState<any[]>([]);
 
-    const [activeTab, setActiveTab] = useState<'OVERVIEW' | 'CASH_FLOW' | 'REGISTERS'>('OVERVIEW');
+    const [activeTab, setActiveTab] = useState<'OVERVIEW' | 'CASH_FLOW' | 'REGISTERS' | 'KITCHEN'>('OVERVIEW');
+    const [kitchenPerformance, setKitchenPerformance] = useState<any[]>([]);
     const [dateRange, setDateRange] = useState({ start: '', end: '' });
 
     // Cash Flow State
@@ -70,6 +71,9 @@ export default function Reports() {
                 const { data } = await api.get(`/reports/registers-consolidated${qs}`);
                 setRegistersConsolidated(data.data.registers);
                 setRegistersTotals({ grandTotal: data.data.grandTotal, totalDiscrepancy: data.data.totalDiscrepancy });
+            } else if (activeTab === 'KITCHEN') {
+                const { data } = await api.get(`/reports/kitchen${qs}`);
+                setKitchenPerformance(data.data);
             }
         } catch (error) {
             console.error("Error fetching report data", error);
@@ -161,26 +165,37 @@ export default function Reports() {
         }
     };
 
+    const calculateAverageKitchenTime = () => {
+        if (kitchenPerformance.length === 0) return 0;
+        let totalMins = 0;
+        kitchenPerformance.forEach(item => {
+            const createdAt = new Date(item.createdAt);
+            const end = item.deliveredAt ? new Date(item.deliveredAt) : (item.readyAt ? new Date(item.readyAt) : (item.preparingAt ? new Date(item.preparingAt) : new Date()));
+            totalMins += Math.max(0, Math.round((end.getTime() - createdAt.getTime()) / 60000));
+        });
+        return Math.round(totalMins / kitchenPerformance.length);
+    };
+
     return (
-        <div className="p-6 h-full flex flex-col bg-muted/10 overflow-auto">
-            <div className="flex justify-between items-end mb-6">
-                <div className="print:hidden">
-                    <h1 className="text-3xl font-bold tracking-tight">Centro de Reportes</h1>
-                    <p className="text-muted-foreground mt-1">Métricas de ventas, flujos de efectivo y consolidación.</p>
+        <div className="p-4 md:p-6 h-full flex flex-col bg-muted/10 overflow-auto">
+            <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end mb-6 gap-6">
+                <div className="print:hidden w-full xl:w-auto">
+                    <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Centro de Reportes</h1>
+                    <p className="text-muted-foreground mt-1 text-sm md:text-base">Métricas de ventas, flujos de efectivo y consolidación.</p>
                 </div>
                 <div className="hidden print:block mb-4">
                     <h1 className="text-2xl font-bold">Reporte del Sistema</h1>
                     <p className="text-sm">Generado el {new Date().toLocaleString()}</p>
                     <p className="text-sm">Fechas: {dateRange.start || 'Inicio'} al {dateRange.end || 'Fin'}</p>
                 </div>
-                <div className="flex flex-col gap-3">
-                    <div className="flex flex-wrap items-center gap-2 print:hidden justify-end">
-                        <button onClick={() => handleQuickDate('TODAY')} className="text-xs border px-2 py-1 rounded-md hover:bg-muted font-medium">Hoy</button>
-                        <button onClick={() => handleQuickDate('WEEK')} className="text-xs border px-2 py-1 rounded-md hover:bg-muted font-medium">Esta Sem.</button>
-                        <button onClick={() => handleQuickDate('FORTNIGHT')} className="text-xs border px-2 py-1 rounded-md hover:bg-muted font-medium">Esta Quin.</button>
-                        <button onClick={() => handleQuickDate('MONTH')} className="text-xs border px-2 py-1 rounded-md hover:bg-muted font-medium">Este Mes</button>
-                        <button onClick={() => handleQuickDate('QUARTER')} className="text-xs border px-2 py-1 rounded-md hover:bg-muted font-medium">Este Trim.</button>
-                        <button onClick={() => handleQuickDate('YEAR')} className="text-xs border px-2 py-1 rounded-md hover:bg-muted font-medium">Este Año</button>
+                <div className="flex flex-col gap-3 w-full xl:w-auto">
+                    <div className="flex flex-wrap items-center gap-2 print:hidden xl:justify-end">
+                        <button onClick={() => handleQuickDate('TODAY')} className="text-xs border px-2 py-1.5 rounded-md hover:bg-muted font-medium bg-background shadow-sm">Hoy</button>
+                        <button onClick={() => handleQuickDate('WEEK')} className="text-xs border px-2 py-1.5 rounded-md hover:bg-muted font-medium bg-background shadow-sm">Esta Sem.</button>
+                        <button onClick={() => handleQuickDate('FORTNIGHT')} className="text-xs border px-2 py-1.5 rounded-md hover:bg-muted font-medium bg-background shadow-sm">Esta Quin.</button>
+                        <button onClick={() => handleQuickDate('MONTH')} className="text-xs border px-2 py-1.5 rounded-md hover:bg-muted font-medium bg-background shadow-sm">Este Mes</button>
+                        <button onClick={() => handleQuickDate('QUARTER')} className="text-xs border px-2 py-1.5 rounded-md hover:bg-muted font-medium bg-background shadow-sm">Este Trim.</button>
+                        <button onClick={() => handleQuickDate('YEAR')} className="text-xs border px-2 py-1.5 rounded-md hover:bg-muted font-medium bg-background shadow-sm">Este Año</button>
                     </div>
                     <div className="flex flex-wrap items-center gap-3 print:hidden">
                         <div className="flex items-center gap-2 border rounded-md px-3 py-1 bg-card shadow-sm text-sm">
@@ -200,10 +215,10 @@ export default function Reports() {
                         <button onClick={exportToExcel} className="flex items-center gap-2 bg-[#217346] text-white px-4 py-2 rounded-md font-bold hover:bg-[#1e6b41] transition-colors shadow-sm">
                             <FileSpreadsheet className="h-4 w-4" /> Exportar a Excel
                         </button>
-                        <button onClick={() => window.print()} className="flex items-center gap-2 border border-foreground bg-card text-foreground px-4 py-2 rounded-md font-bold hover:bg-muted transition-colors shadow-sm">
+                        <button onClick={() => window.print()} className="flex-1 md:flex-none flex items-center justify-center gap-2 border border-foreground bg-card text-foreground px-4 py-2 rounded-md font-bold hover:bg-muted transition-colors shadow-sm whitespace-nowrap">
                             <Printer className="h-4 w-4" /> PDF / Imprimir
                         </button>
-                        <button onClick={fetchTabData} className="p-2 border rounded-md bg-card hover:bg-muted" title="Recargar">
+                        <button onClick={fetchTabData} className="p-2 border rounded-md bg-card hover:bg-muted flex items-center justify-center shadow-sm" title="Recargar">
                             <Loader2 className={`h-5 w-5 ${loading ? 'animate-spin text-primary' : 'text-muted-foreground'}`} />
                         </button>
                     </div>
@@ -211,10 +226,11 @@ export default function Reports() {
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-4 border-b mb-6 uppercase text-sm font-bold tracking-wide print:hidden">
+            <div className="flex flex-wrap gap-x-6 gap-y-2 border-b mb-6 uppercase text-sm font-bold tracking-wide print:hidden">
                 <button onClick={() => setActiveTab('OVERVIEW')} className={`pb-2 px-2 border-b-2 transition-colors ${activeTab === 'OVERVIEW' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}>Dashboard General</button>
-                <button onClick={() => setActiveTab('CASH_FLOW')} className={`pb-2 px-2 border-b-2 transition-colors ${activeTab === 'CASH_FLOW' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}>Flujo de Efectivo (Estado de Resultados)</button>
+                <button onClick={() => setActiveTab('CASH_FLOW')} className={`pb-2 px-2 border-b-2 transition-colors ${activeTab === 'CASH_FLOW' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}>Flujo de Efectivo</button>
                 <button onClick={() => setActiveTab('REGISTERS')} className={`pb-2 px-2 border-b-2 transition-colors ${activeTab === 'REGISTERS' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}>Consolidado de Cajas</button>
+                <button onClick={() => setActiveTab('KITCHEN')} className={`pb-2 px-2 border-b-2 transition-colors ${activeTab === 'KITCHEN' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}>Auditoría de Cocina</button>
             </div>
 
             {activeTab === 'OVERVIEW' && (
@@ -320,7 +336,9 @@ export default function Reports() {
                     <AlertTriangle className="h-5 w-5" />
                     Alertas de Reabastecimiento (Inventario Crítico / Bajo)
                 </h3>
-                <div className="overflow-x-auto">
+                
+                {/* Desktop View */}
+                <div className="hidden md:block overflow-x-auto">
                     <table className="w-full text-sm text-left">
                         <thead className="bg-muted text-muted-foreground uppercase text-xs">
                             <tr>
@@ -367,8 +385,158 @@ export default function Reports() {
                         </tbody>
                     </table>
                 </div>
+
+                {/* Mobile Card View */}
+                <div className="md:hidden flex flex-col gap-4">
+                    {lowStockAlerts.map(alert => (
+                        <div key={alert.id} className="bg-background border rounded-xl shadow-sm p-4 relative overflow-hidden">
+                            <div className={`absolute left-0 top-0 bottom-0 w-1 ${alert.status === 'CRITICAL' ? 'bg-destructive' : 'bg-amber-500'}`} />
+                            <div className="flex justify-between items-start mb-3">
+                                <div>
+                                    <h4 className="font-bold text-base">{alert.name}</h4>
+                                    <p className="text-xs text-muted-foreground font-mono mt-0.5">{alert.sku} • {alert.branch}</p>
+                                </div>
+                                <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${alert.status === 'CRITICAL' ? 'bg-destructive/10 text-destructive animate-pulse' : 'bg-amber-500/10 text-amber-700'}`}>
+                                    {alert.status === 'CRITICAL' ? 'Agotado' : 'Bajo Stock'}
+                                </span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4 mt-2 pt-3 border-t">
+                                <div>
+                                    <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Mínimo Req.</p>
+                                    <p className="font-mono text-sm">{alert.minStock} {alert.unit}</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className={`text-[10px] uppercase font-bold tracking-wider mb-1 ${alert.status === 'CRITICAL' ? 'text-destructive' : 'text-amber-700'}`}>Existencia Actual</p>
+                                    <p className={`font-mono text-xl font-bold ${alert.status === 'CRITICAL' ? 'text-destructive' : 'text-amber-600'}`}>{alert.currentStock} {alert.unit}</p>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                    {lowStockAlerts.length === 0 && !loading && (
+                        <div className="text-center py-8 text-muted-foreground bg-background rounded-xl border">
+                            <Box className="h-8 w-8 mx-auto mb-3 text-emerald-600 opacity-50" />
+                            <p className="font-medium text-emerald-700">Stock Saludable</p>
+                            <p className="text-xs mt-1">No hay alertas en este momento.</p>
+                        </div>
+                    )}
+                </div>
             </div>
                 </>
+            )}
+
+            {activeTab === 'KITCHEN' && (
+                <div className="bg-card p-4 md:p-6 border rounded-xl shadow-sm flex flex-col flex-1 min-h-[400px]">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                        <div>
+                            <h2 className="text-xl font-bold flex items-center gap-2"><Loader2 className="h-6 w-6 text-emerald-600" /> Auditoría de Cocina</h2>
+                            <p className="text-sm text-muted-foreground mt-1">Tiempo Promedio Global: <span className="font-bold text-foreground text-base">{calculateAverageKitchenTime()} min</span></p>
+                        </div>
+                        <span className="text-xs bg-muted text-muted-foreground px-3 py-1.5 rounded-full font-mono font-medium border shadow-sm">Últimos {kitchenPerformance.length} registros</span>
+                    </div>
+
+                    {/* Desktop View */}
+                    <div className="hidden md:block overflow-x-auto flex-1 bg-background rounded-lg border">
+                        <table className="w-full text-left text-sm whitespace-nowrap">
+                            <thead className="bg-muted text-muted-foreground border-b border-border/50">
+                                <tr>
+                                    <th className="px-4 py-3 font-medium">Orden / Mesa</th>
+                                    <th className="px-4 py-3 font-medium">Producto</th>
+                                    <th className="px-4 py-3 font-medium">Ingresó</th>
+                                    <th className="px-4 py-3 font-medium">Inicio Prep.</th>
+                                    <th className="px-4 py-3 font-medium">Listo</th>
+                                    <th className="px-4 py-3 font-medium">Entregado</th>
+                                    <th className="px-4 py-3 font-medium text-right">Tiempo Total (Min)</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-border/50">
+                                {kitchenPerformance.map((item, i) => {
+                                    const createdAt = new Date(item.createdAt);
+                                    const preparingAt = item.preparingAt ? new Date(item.preparingAt) : null;
+                                    const readyAt = item.readyAt ? new Date(item.readyAt) : null;
+                                    const deliveredAt = item.deliveredAt ? new Date(item.deliveredAt) : null;
+
+                                    const end = deliveredAt || readyAt || preparingAt || new Date();
+                                    const diffMs = end.getTime() - createdAt.getTime();
+                                    const diffMins = Math.max(0, Math.round(diffMs / 60000));
+
+                                    return (
+                                        <tr key={item.id || i} className="hover:bg-muted/50 transition-colors">
+                                            <td className="px-4 py-3">
+                                                <div className="font-bold">{item.order?.table ? `Mesa ${item.order.table.number}` : (item.order?.customerId || 'Para Llevar')}</div>
+                                                <div className="text-xs text-muted-foreground font-mono">#{item.order?.id?.substring(0, 8)}</div>
+                                            </td>
+                                            <td className="px-4 py-3 font-medium">{item.productSale?.name}</td>
+                                            <td className="px-4 py-3 text-muted-foreground">{createdAt.toLocaleTimeString()}</td>
+                                            <td className="px-4 py-3 font-mono">{preparingAt ? preparingAt.toLocaleTimeString() : <span className="text-muted-foreground/30">-</span>}</td>
+                                            <td className="px-4 py-3 text-emerald-600 font-mono">{readyAt ? readyAt.toLocaleTimeString() : <span className="text-muted-foreground/30">-</span>}</td>
+                                            <td className="px-4 py-3 font-mono">{deliveredAt ? deliveredAt.toLocaleTimeString() : <span className="text-muted-foreground/30">-</span>}</td>
+                                            <td className="px-4 py-3 text-right">
+                                                <span className={`font-black text-lg ${diffMins > 20 ? 'text-red-500' : 'text-foreground'}`}>{diffMins}</span> <span className="text-xs text-muted-foreground font-normal">min</span>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* Mobile Card View */}
+                    <div className="md:hidden flex flex-col gap-4">
+                        {kitchenPerformance.length === 0 && !loading && (
+                            <div className="py-12 text-center text-muted-foreground bg-background rounded-xl border">
+                                <Loader2 className="h-10 w-10 mx-auto mb-4 opacity-20" />
+                                <p className="font-medium text-foreground">No hay datos de auditoría</p>
+                                <p className="text-xs px-4">No se encontraron productos en este período.</p>
+                            </div>
+                        )}
+                        {kitchenPerformance.map((item, i) => {
+                            const createdAt = new Date(item.createdAt);
+                            const preparingAt = item.preparingAt ? new Date(item.preparingAt) : null;
+                            const readyAt = item.readyAt ? new Date(item.readyAt) : null;
+                            const deliveredAt = item.deliveredAt ? new Date(item.deliveredAt) : null;
+
+                            const end = deliveredAt || readyAt || preparingAt || new Date();
+                            const diffMs = end.getTime() - createdAt.getTime();
+                            const diffMins = Math.max(0, Math.round(diffMs / 60000));
+
+                            return (
+                                <div key={item.id || i} className="bg-background rounded-xl border shadow-sm p-4 flex flex-col gap-3 relative overflow-hidden">
+                                    <div className={`absolute left-0 top-0 bottom-0 w-1 ${diffMins > 20 ? 'bg-red-500' : 'bg-primary'}`} />
+                                    
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <div className="font-bold text-base">{item.productSale?.name}</div>
+                                            <div className="text-sm text-muted-foreground">{item.order?.table ? `Mesa ${item.order.table.number}` : (item.order?.customerId || 'Para Llevar')} <span className="font-mono text-xs opacity-50 ml-1">#{item.order?.id?.substring(0, 8)}</span></div>
+                                        </div>
+                                        <div className="flex flex-col items-end">
+                                            <span className={`font-black text-2xl leading-none ${diffMins > 20 ? 'text-red-500' : 'text-foreground'}`}>{diffMins}</span>
+                                            <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Minutos</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-xs mt-2 pt-3 border-t">
+                                        <div>
+                                            <span className="text-muted-foreground block mb-0.5 font-medium">1. Ingreso</span>
+                                            <span className="font-mono">{createdAt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                                        </div>
+                                        <div>
+                                            <span className="text-muted-foreground block mb-0.5 font-medium">2. Prep.</span>
+                                            <span className="font-mono">{preparingAt ? preparingAt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '-'}</span>
+                                        </div>
+                                        <div>
+                                            <span className="text-emerald-600 block mb-0.5 font-medium">3. Listo</span>
+                                            <span className="font-mono text-emerald-700 font-medium">{readyAt ? readyAt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '-'}</span>
+                                        </div>
+                                        <div>
+                                            <span className="text-muted-foreground block mb-0.5 font-medium">4. Entrega</span>
+                                            <span className="font-mono">{deliveredAt ? deliveredAt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '-'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
             )}
 
             {activeTab === 'CASH_FLOW' && cashFlowSummary && (
@@ -376,19 +544,19 @@ export default function Reports() {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div className="p-6 bg-card border rounded-xl shadow-sm">
                             <h4 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-1">Ingresos de Ventas (+)</h4>
-                            <p className="text-3xl font-mono text-emerald-600 font-bold">${cashFlowSummary.totalSales.toFixed(2)}</p>
+                            <p className="text-3xl text-emerald-600 font-bold">${cashFlowSummary.totalSales.toFixed(2)}</p>
                         </div>
                         <div className="p-6 bg-card border rounded-xl shadow-sm">
                             <h4 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-1">Inyecciones Operativas (+)</h4>
-                            <p className="text-3xl font-mono text-blue-600 font-bold">${cashFlowSummary.totalIncomes.toFixed(2)}</p>
+                            <p className="text-3xl text-blue-600 font-bold">${cashFlowSummary.totalIncomes.toFixed(2)}</p>
                         </div>
                         <div className="p-6 bg-card border rounded-xl shadow-sm">
                             <h4 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-1">Gastos y Retiros (-)</h4>
-                            <p className="text-3xl font-mono text-red-600 font-bold">${cashFlowSummary.totalExpenses.toFixed(2)}</p>
+                            <p className="text-3xl text-red-600 font-bold">${cashFlowSummary.totalExpenses.toFixed(2)}</p>
                         </div>
                         <div className="p-6 bg-primary text-primary-foreground border-primary rounded-xl shadow-sm">
                             <h4 className="text-sm font-bold uppercase tracking-wider text-primary-foreground/70 mb-1">Resultado Neto Esperado (=)</h4>
-                            <p className="text-4xl font-mono font-black">${cashFlowSummary.netIncome.toFixed(2)}</p>
+                            <p className="text-3xl lg:text-4xl font-black">${cashFlowSummary.netIncome.toFixed(2)}</p>
                         </div>
                     </div>
 
@@ -396,7 +564,9 @@ export default function Reports() {
                         <div className="p-4 border-b bg-muted/30">
                             <h2 className="font-bold text-lg">Libro Mayor (Histórico de Movimientos)</h2>
                         </div>
-                        <div className="flex-1 overflow-auto">
+                        
+                        {/* Desktop View */}
+                        <div className="hidden md:block flex-1 overflow-auto">
                             <table className="w-full text-sm text-left">
                                 <thead className="bg-muted text-muted-foreground uppercase text-xs sticky top-0 shadow-sm z-10">
                                     <tr>
@@ -432,6 +602,43 @@ export default function Reports() {
                                 </tbody>
                             </table>
                         </div>
+
+                        {/* Mobile Card View */}
+                        <div className="md:hidden flex flex-col gap-3 p-4 bg-muted/10">
+                            {cashFlowTransactions.map(tx => (
+                                <div key={tx.id} className="bg-background border rounded-xl p-4 shadow-sm relative overflow-hidden">
+                                    <div className={`absolute left-0 top-0 bottom-0 w-1 ${tx.type === 'EXPENSE' || tx.type === 'REFUND' ? 'bg-destructive' : 'bg-emerald-500'}`} />
+                                    <div className="flex justify-between items-start">
+                                        <div className="pr-2">
+                                            <p className="font-bold text-sm leading-tight">{tx.description}</p>
+                                            <p className="text-[10px] text-muted-foreground font-mono mt-1 opacity-70 truncate max-w-[180px]">{tx.reference}</p>
+                                        </div>
+                                        <div className="flex flex-col items-end">
+                                            <p className={`font-bold font-mono text-xl leading-none ${tx.type === 'EXPENSE' || tx.type === 'REFUND' ? 'text-destructive' : 'text-emerald-600'}`}>
+                                                {tx.type === 'EXPENSE' || tx.type === 'REFUND' ? '-' : ''}${tx.amount.toFixed(2)}
+                                            </p>
+                                            <span className={`inline-block px-2 py-0.5 mt-2 rounded text-[10px] font-bold uppercase tracking-widest ${tx.type === 'SALE' ? 'bg-emerald-500/10 text-emerald-700' : tx.type === 'INCOME' ? 'bg-blue-500/10 text-blue-700' : tx.type === 'REFUND' ? 'bg-orange-500/10 text-orange-700' : 'bg-red-500/10 text-red-700'}`}>
+                                                {tx.type}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="mt-3 pt-3 border-t grid grid-cols-2 text-xs text-muted-foreground">
+                                        <div>
+                                            <span className="block font-semibold uppercase tracking-wider text-[10px] mb-0.5">Fecha / Hora</span>
+                                            <span className="font-mono">{new Date(tx.date).toLocaleString([], {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'})}</span>
+                                        </div>
+                                        <div className="text-right">
+                                            <span className="block font-semibold uppercase tracking-wider text-[10px] mb-0.5">Origen</span>
+                                            <span className="font-medium truncate block">{tx.branchName}</span>
+                                            <span className="text-[10px] opacity-70">({tx.registerName})</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                            {cashFlowTransactions.length === 0 && !loading && (
+                                <div className="text-center py-8 text-muted-foreground bg-background rounded-xl border">No existen flujos de efectivo.</div>
+                            )}
+                        </div>
                     </div>
                 </div>
             )}
@@ -441,11 +648,11 @@ export default function Reports() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="p-6 bg-card border rounded-xl shadow-sm">
                             <h4 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-1">Efectivo Consolidado (Total Recibido)</h4>
-                            <p className="text-4xl font-mono text-foreground font-black">${registersTotals.grandTotal.toFixed(2)}</p>
+                            <p className="text-4xl text-foreground font-black">${registersTotals.grandTotal.toFixed(2)}</p>
                         </div>
                         <div className={`p-6 bg-card border rounded-xl shadow-sm ${registersTotals.totalDiscrepancy < 0 ? 'border-destructive/50' : ''}`}>
                             <h4 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-1">Diferencias/Faltantes Global</h4>
-                            <p className={`text-4xl font-mono font-black ${registersTotals.totalDiscrepancy < 0 ? 'text-destructive' : 'text-emerald-600'}`}>
+                            <p className={`text-4xl font-black ${registersTotals.totalDiscrepancy < 0 ? 'text-destructive' : 'text-emerald-600'}`}>
                                 {registersTotals.totalDiscrepancy >= 0 ? '0.00 (OK)' : `$${registersTotals.totalDiscrepancy.toFixed(2)}`}
                             </p>
                         </div>
@@ -455,7 +662,9 @@ export default function Reports() {
                         <div className="p-4 border-b bg-muted/30">
                             <h2 className="font-bold text-lg">Consolidado por Sucursal y Caja (Turnos Cerrados)</h2>
                         </div>
-                        <div className="flex-1 overflow-auto">
+                        
+                        {/* Desktop View */}
+                        <div className="hidden md:block flex-1 overflow-auto">
                             <table className="w-full text-sm text-left">
                                 <thead className="bg-muted text-muted-foreground uppercase text-xs sticky top-0 shadow-sm z-10">
                                     <tr>
@@ -491,6 +700,45 @@ export default function Reports() {
                                     )}
                                 </tbody>
                             </table>
+                        </div>
+
+                        {/* Mobile Card View */}
+                        <div className="md:hidden flex flex-col gap-3 p-4 bg-muted/10">
+                            {registersConsolidated.map((r, i) => (
+                                <div key={i} className="bg-background border rounded-xl p-4 shadow-sm relative overflow-hidden">
+                                    <div className={`absolute left-0 top-0 bottom-0 w-1 ${r.discrepancy < 0 ? 'bg-destructive' : 'bg-emerald-500'}`} />
+                                    <div className="flex justify-between items-start mb-3">
+                                        <div>
+                                            <h4 className="font-bold text-base text-primary">{r.registerName}</h4>
+                                            <p className="text-xs text-muted-foreground mt-0.5 font-medium">{r.branchName}</p>
+                                        </div>
+                                        <div className="bg-muted px-2 py-1 rounded-md text-center">
+                                            <span className="block font-mono font-bold leading-none">{r.sessionCount}</span>
+                                            <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Turnos</span>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4 mt-2 pt-3 border-t">
+                                        <div>
+                                            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Efectivo Total</p>
+                                            <p className="font-mono text-xl font-bold">${r.totalClosed.toFixed(2)}</p>
+                                        </div>
+                                        <div className="flex flex-col justify-end items-end">
+                                            {r.discrepancy < 0 ? (
+                                                <span className="px-2 py-1 bg-destructive/10 text-destructive rounded font-bold text-[10px] uppercase tracking-wider text-right">
+                                                    FALTANTES:<br/>${Math.abs(r.discrepancy).toFixed(2)}
+                                                </span>
+                                            ) : (
+                                                <span className="px-2 py-1 bg-emerald-500/10 text-emerald-700 rounded font-bold text-[10px] uppercase tracking-wider text-right">
+                                                    CUADRE PERFECTO
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                            {registersConsolidated.length === 0 && !loading && (
+                                <div className="text-center py-8 text-muted-foreground bg-background rounded-xl border">No hay turnos cerrados.</div>
+                            )}
                         </div>
                     </div>
                 </div>

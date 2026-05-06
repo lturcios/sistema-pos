@@ -279,6 +279,10 @@ model OrderItem {
   notes         String?
   status        OrderItemStatus @default(PENDING)
 
+  preparingAt   DateTime?
+  readyAt       DateTime?
+  deliveredAt   DateTime?
+
   order       Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
   productSale ProductSale @relation(fields: [productSaleId], references: [id])
 

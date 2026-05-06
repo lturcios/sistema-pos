@@ -94,7 +94,7 @@ export default function Dashboard() {
                 {hasPermission('reports', 'read') && (
                     <>
                         {/* Hoy Revenue */}
-                        <div className="bg-primary text-primary-foreground p-6 brutal-border shadow-brutal-primary relative overflow-hidden group flex flex-col justify-between">
+                        <div className="bg-primary text-primary-foreground p-6 border border-primary/20 rounded-2xl shadow-lg shadow-primary/20 relative overflow-hidden group flex flex-col justify-between">
                             <div className="absolute -right-4 -top-4 opacity-20 transform group-hover:scale-110 transition-transform">
                                 <DollarSign className="h-32 w-32" />
                             </div>
@@ -106,7 +106,7 @@ export default function Dashboard() {
                         </div>
 
                         {/* Mes Revenue */}
-                        <div className="brutal-card p-6 flex flex-col justify-between">
+                        <div className="bg-card text-card-foreground border border-border/50 rounded-2xl shadow-lg shadow-primary/10 p-6 flex flex-col justify-between">
                             <div>
                                 <p className="font-bold text-sm mb-2 uppercase tracking-widest text-muted-foreground font-mono">Ventas del Mes</p>
                                 <h3 className="text-4xl font-black text-foreground">${Number(monthlyMetrics.revenue).toFixed(2)}</h3>
@@ -117,7 +117,7 @@ export default function Dashboard() {
                         </div>
 
                         {/* Pedidos Hoy */}
-                        <div className="brutal-card p-6 flex flex-col justify-between">
+                        <div className="bg-card text-card-foreground border border-border/50 rounded-2xl shadow-lg shadow-primary/10 p-6 flex flex-col justify-between">
                             <div>
                                 <p className="font-bold text-sm mb-2 uppercase tracking-widest text-muted-foreground font-mono">Órdenes Hoy</p>
                                 <h3 className="text-4xl font-black text-foreground">{todayMetrics.totalOrders}</h3>
@@ -130,7 +130,7 @@ export default function Dashboard() {
                 )}
 
                 {/* Shortcuts */}
-                <div className="brutal-card p-6 flex flex-col justify-center gap-4">
+                <div className="bg-card text-card-foreground border border-border/50 rounded-2xl shadow-lg shadow-primary/10 p-6 flex flex-col justify-center gap-4">
                     <p className="text-sm font-bold text-foreground font-mono uppercase tracking-widest border-b-2 border-foreground pb-2">Accesos Rápidos</p>
                     <Link to="/pos" className="brutal-button flex items-center justify-between p-3 bg-accent text-accent-foreground text-sm uppercase tracking-widest">
                         <span className="flex items-center gap-3"><ShoppingCart className="h-5 w-5" /> Ir a POS</span>
@@ -148,7 +148,7 @@ export default function Dashboard() {
 
                 {/* 7 Days Trend Curve */}
                 {hasPermission('reports', 'read') ? (
-                    <div className="lg:col-span-2 brutal-card p-6 flex flex-col">
+                    <div className="lg:col-span-2 bg-card text-card-foreground border border-border/50 rounded-2xl shadow-lg shadow-primary/10 p-6 flex flex-col">
                         <div className="flex justify-between items-center mb-8 border-b-2 border-foreground pb-4">
                             <h3 className="font-black text-xl flex items-center gap-3 uppercase tracking-widest">
                                 <Flame className="h-6 w-6 text-foreground" />
@@ -172,7 +172,7 @@ export default function Dashboard() {
                         </div>
                     </div>
                 ) : (
-                    <div className="lg:col-span-2 brutal-card p-6 flex flex-col items-center justify-center text-center">
+                    <div className="lg:col-span-2 bg-card text-card-foreground border border-border/50 rounded-2xl shadow-lg shadow-primary/10 p-6 flex flex-col items-center justify-center text-center">
                         <TrendingUp className="h-16 w-16 text-muted-foreground mb-6" />
                         <h3 className="font-black text-2xl mb-4 uppercase tracking-widest">MÉTRICAS DEL SISTEMA</h3>
                         <p className="text-muted-foreground font-mono text-sm max-w-[400px]">Tu rol actual no tiene acceso completo a las estadísticas de ventas y reportes financieros del sistema.</p>
@@ -181,44 +181,44 @@ export default function Dashboard() {
 
                 {/* Active Sessions Mini-view */}
                 {hasPermission('cash', 'read') && (
-                    <div className="brutal-card p-6 flex flex-col">
-                        <h3 className="font-black text-xl mb-6 flex items-center gap-3 uppercase tracking-widest border-b-2 border-foreground pb-4">
-                            <Store className="h-6 w-6 text-foreground" />
+                    <div className="bg-card text-card-foreground border border-border/50 rounded-2xl shadow-lg shadow-primary/10 p-4 md:p-6 flex flex-col min-h-[400px] lg:min-h-0">
+                        <h3 className="font-black text-lg md:text-xl mb-4 md:mb-6 flex items-center gap-2 md:gap-3 uppercase tracking-widest border-b-2 border-foreground pb-3 md:pb-4">
+                            <Store className="h-5 w-5 md:h-6 md:w-6 text-foreground" />
                             Turnos Recientes
                         </h3>
 
-                        <div className="flex-1 flex flex-col gap-4 overflow-y-auto pr-2">
+                        <div className="flex-1 flex flex-col gap-3 md:gap-4 overflow-y-auto pr-1 md:pr-2">
                             {recentSessions.length === 0 ? (
                                 <div className="flex-1 flex flex-col justify-center items-center text-center p-4">
-                                    <div className="p-4 brutal-border bg-muted mb-4"><DollarSign className="h-8 w-8 text-muted-foreground" /></div>
+                                    <div className="p-4 rounded-2xl bg-muted mb-4"><DollarSign className="h-8 w-8 text-muted-foreground" /></div>
                                     <p className="text-sm font-bold font-mono text-muted-foreground uppercase">Sin Turnos</p>
                                 </div>
                             ) : (
                                 recentSessions.map(session => (
-                                    <div key={session.id} className="relative overflow-hidden group brutal-border bg-card p-4 transition-all hover:-translate-y-1 hover:shadow-brutal">
-                                        <div className="flex justify-between items-start mb-4 border-b-2 border-foreground/10 pb-2">
-                                            <div className="flex items-center gap-3">
-                                                <div className="h-10 w-10 brutal-border bg-accent flex items-center justify-center text-accent-foreground font-black text-lg">
-                                                    {session.user?.name?.charAt(0) || 'U'}
+                                    <div key={session.id} className="relative shrink-0 overflow-hidden group border border-border/50 rounded-xl bg-card p-3 md:p-4 transition-all hover:-translate-y-1 hover:shadow-md">
+                                        <div className="flex justify-between items-start mb-3 md:mb-4 border-b-2 border-foreground/10 pb-2">
+                                            <div className="flex items-center gap-2 md:gap-3">
+                                                <div className="h-8 w-8 md:h-10 md:w-10 rounded-full bg-accent flex items-center justify-center text-accent-foreground font-black text-base md:text-lg shadow-sm">
+                                                    {session.user?.fullName?.charAt(0) || session.user?.name?.charAt(0) || 'U'}
                                                 </div>
                                                 <div>
-                                                    <p className="font-black text-sm uppercase tracking-wide leading-tight">{session.user?.name}</p>
-                                                    <p className="text-xs text-muted-foreground font-mono uppercase">{session.register?.name}</p>
+                                                    <p className="font-black text-xs md:text-sm uppercase tracking-wide leading-tight">{session.user?.fullName || session.user?.name}</p>
+                                                    <p className="text-[10px] md:text-xs text-muted-foreground font-mono uppercase">{session.register?.name}</p>
                                                 </div>
                                             </div>
-                                            <span className={`px-2 py-1 brutal-border text-xs font-black tracking-widest uppercase ${session.status === 'OPEN' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
+                                            <span className={`inline-block px-2 md:px-2.5 py-1 rounded-full text-[9px] md:text-[10px] font-black tracking-widest uppercase border leading-none ${session.status === 'OPEN' ? 'bg-primary text-primary-foreground border-primary' : 'bg-muted text-muted-foreground border-muted-foreground/30'}`}>
                                                 {session.status === 'OPEN' ? 'ACTIVO' : 'CERRADO'}
                                             </span>
                                         </div>
 
                                         <div className="flex justify-between items-end mt-2">
                                             <div>
-                                                <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Apertura</p>
-                                                <p className="text-sm font-mono font-bold">${Number(session.openingBalance).toFixed(2)}</p>
+                                                <p className="text-[9px] md:text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Apertura</p>
+                                                <p className="text-xs md:text-sm font-mono font-bold">${Number(session.openingBalance).toFixed(2)}</p>
                                             </div>
                                             <div className="text-right">
-                                                <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">{session.status === 'OPEN' ? 'Esperado' : 'Final'}</p>
-                                                <p className="text-lg font-mono font-black text-foreground">
+                                                <p className="text-[9px] md:text-[10px] uppercase font-bold text-muted-foreground tracking-widest">{session.status === 'OPEN' ? 'Esperado' : 'Final'}</p>
+                                                <p className="text-base md:text-lg font-mono font-black text-foreground">
                                                     ${session.status === 'OPEN'
                                                         ? Number(session.expectedBalance || session.openingBalance).toFixed(2)
                                                         : Number(session.closingBalance).toFixed(2)}
@@ -230,7 +230,7 @@ export default function Dashboard() {
                             )}
                         </div>
 
-                        <Link to="/cash" className="mt-6 brutal-button bg-foreground text-background p-3 text-sm font-bold text-center uppercase tracking-widest flex items-center justify-center gap-2">
+                        <Link to="/cash" className="mt-4 md:mt-6 brutal-button bg-foreground text-background p-3 text-xs md:text-sm font-bold text-center uppercase tracking-widest flex items-center justify-center gap-2">
                             Gestionar Turnos <ArrowRight className="h-4 w-4" />
                         </Link>
                     </div>

@@ -151,25 +151,25 @@ export default function Cash() {
 
     return (
         <div className="p-6 h-full flex flex-col bg-muted/10 relative">
-            <div className="flex justify-between items-end mb-6">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Gestión de Cajas</h1>
-                    <p className="text-muted-foreground mt-1">Apertura, movimientos, retiros de efectivo y cortes de turno.</p>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-4">
+                <div className="w-full md:w-auto">
+                    <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Gestión de Cajas</h1>
+                    <p className="text-muted-foreground mt-1 text-sm md:text-base">Apertura, movimientos, retiros de efectivo y cortes de turno.</p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
                     {hasPermission('registers', 'create') && (
-                        <button onClick={() => setShowRegisterModal(true)} className="flex items-center gap-2 border bg-card text-foreground px-4 py-2 rounded-md font-medium hover:bg-muted transition-colors shadow-sm text-sm">
+                        <button onClick={() => setShowRegisterModal(true)} className="flex-1 md:flex-none justify-center flex items-center gap-2 border bg-card text-foreground px-4 py-2 rounded-md font-medium hover:bg-muted transition-colors shadow-sm text-sm whitespace-nowrap">
                             <Plus className="h-4 w-4" />
                             Crear Caja (Admin)
                         </button>
                     )}
                     {!activeSession ? (
-                        <button onClick={() => setShowOpenModal(true)} className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-md font-bold hover:bg-emerald-700 transition-colors shadow-sm">
+                        <button onClick={() => setShowOpenModal(true)} className="flex-1 md:flex-none justify-center flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-md font-bold hover:bg-emerald-700 transition-colors shadow-sm whitespace-nowrap">
                             <CheckCircle className="h-4 w-4" />
                             Abrir Mi Turno
                         </button>
                     ) : (
-                        <button onClick={() => { setSessionToClose(activeSession); setShowCloseModal(true); }} className="flex items-center gap-2 bg-destructive text-destructive-foreground px-4 py-2 rounded-md font-bold hover:bg-destructive/90 transition-colors shadow-sm">
+                        <button onClick={() => { setSessionToClose(activeSession); setShowCloseModal(true); }} className="flex-1 md:flex-none justify-center flex items-center gap-2 bg-destructive text-destructive-foreground px-4 py-2 rounded-md font-bold hover:bg-destructive/90 transition-colors shadow-sm whitespace-nowrap">
                             <Lock className="h-4 w-4" />
                             Cerrar Turno (Corte)
                         </button>
@@ -177,10 +177,10 @@ export default function Cash() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 overflow-hidden">
+            <div className="flex flex-col lg:flex-row gap-6 flex-1 overflow-hidden">
                 {/* STATUS BAR / ACTIVE SESSION */}
-                <div className="lg:col-span-1 flex flex-col gap-6">
-                    <div className={`p-6 rounded-xl border shadow-sm flex flex-col text-white ${activeSession ? 'bg-gradient-to-br from-emerald-600 to-emerald-800' : 'bg-gradient-to-br from-slate-700 to-slate-900 border-slate-700'}`}>
+                <div className="w-full lg:w-1/3 flex flex-col gap-6 shrink-0 lg:overflow-y-auto pb-4 lg:pb-0 pr-1">
+                    <div className={`p-6 rounded-xl border shadow-sm flex flex-col text-white shrink-0 ${activeSession ? 'bg-gradient-to-br from-emerald-600 to-emerald-800' : 'bg-gradient-to-br from-slate-700 to-slate-900 border-slate-700'}`}>
                         <h2 className="text-lg font-bold mb-4 opacity-90 tracking-wide flex items-center justify-between">
                             <span>Mi Turno Actual</span>
                             <CreditCard className="h-5 w-5 opacity-50" />
@@ -204,7 +204,7 @@ export default function Cash() {
                                 </div>
                                 <div className="mt-8">
                                     <button onClick={() => setShowTxModal(true)} className="w-full bg-white/20 hover:bg-white/30 text-white py-3 rounded-lg font-bold transition-colors flex items-center justify-center gap-2 border border-white/20 shadow">
-                                        <DollarSign className="h-5 w-5" /> Movimiento Rápido de Efectivo
+                                        <DollarSign className="h-5 w-5" /> Movimiento Rápido
                                     </button>
                                 </div>
                             </>
@@ -218,80 +218,154 @@ export default function Cash() {
                     </div>
 
                     {/* Summary list of recent movements mapped if active session mapped from a context or endpoint *to be expanded* */}
-                    <div className="bg-card rounded-xl border shadow-sm p-4 flex-1 overflow-auto">
+                    <div className="bg-card rounded-xl border shadow-sm p-4 flex-1 min-h-[150px]">
                         <h3 className="font-bold mb-3 border-b pb-2 flex items-center justify-between">Movimientos de la Sedes</h3>
                         <p className="text-xs text-muted-foreground italic text-center py-10 opacity-70">Para ver transacciones detalladas navegue al histórico.</p>
                     </div>
                 </div>
 
                 {/* HISTORICAL SESSIONS TABLE */}
-                <div className="lg:col-span-2 bg-card rounded-xl border shadow-sm flex flex-col overflow-hidden">
+                <div className="w-full lg:w-2/3 bg-card rounded-xl border shadow-sm flex flex-col overflow-hidden">
                     <div className="p-4 border-b bg-muted/30">
                         <h2 className="font-bold text-lg">Histórico de Cortes (Arqueos)</h2>
                     </div>
                     <div className="flex-1 overflow-auto">
-                        <table className="w-full text-sm text-left">
-                            <thead className="bg-muted text-muted-foreground uppercase text-xs sticky top-0">
-                                <tr>
-                                    <th className="px-4 py-3 font-semibold">Fecha / Cajero</th>
-                                    <th className="px-4 py-3 font-semibold">Caja Activa</th>
-                                    <th className="px-4 py-3 font-semibold text-right">Inicial</th>
-                                    <th className="px-4 py-3 font-semibold text-right">Final Reportado</th>
-                                    <th className="px-4 py-3 font-semibold text-center">Descuadre</th>
-                                    <th className="px-4 py-3 font-semibold text-center">Estado</th>
-                                    <th className="px-4 py-3 font-semibold text-center">Reporte</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y relative">
-                                {sessions.map(s => {
-                                    const diff = s.discrepancy !== null ? Number(s.discrepancy) : 0;
-                                    return (
-                                        <tr key={s.id} className="hover:bg-muted/50 transition-colors group">
-                                            <td className="px-4 py-4">
-                                                <div className="font-bold">{s.user.fullName}</div>
-                                                <div className="text-xs text-muted-foreground">{new Date(s.openedAt).toLocaleDateString()} {new Date(s.openedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {s.closedAt ? new Date(s.closedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '...'}</div>
-                                            </td>
-                                            <td className="px-4 py-4 font-medium text-primary">{s.register.name}</td>
-                                            <td className="px-4 py-4 text-right font-mono">${Number(s.openingBalance).toFixed(2)}</td>
-                                            <td className="px-4 py-4 text-right font-mono font-bold">{s.closingBalance !== null ? `$${Number(s.closingBalance).toFixed(2)}` : '---'}</td>
-                                            <td className="px-4 py-4 text-center">
-                                                {s.closingBalance === null ? <span className="text-muted-foreground">---</span> : (
-                                                    isAdmin ? (
-                                                        <span className={`px-2 py-0.5 rounded text-xs font-bold font-mono ${diff === 0 ? 'bg-emerald-500/10 text-emerald-600' : diff > 0 ? 'bg-amber-500/10 text-amber-600' : 'bg-destructive/10 text-destructive'}`}>
-                                                            {diff === 0 ? 'OK / CUADRADO' : diff > 0 ? `SOBRANTE: +${diff.toFixed(2)}` : `FALTANTE: ${diff.toFixed(2)}`}
-                                                        </span>
-                                                    ) : (
-                                                        <span className={`px-2 py-0.5 rounded text-xs font-bold font-mono ${diff >= 0 ? 'bg-emerald-500/10 text-emerald-600' : 'bg-destructive/10 text-destructive'}`}>
-                                                            {diff >= 0 ? 'OK / CUADRADO' : `FALTANTE: ${diff.toFixed(2)}`}
-                                                        </span>
-                                                    )
-                                                )}
-                                            </td>
-                                            <td className="px-4 py-4 text-center">
-                                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${s.status === 'OPEN' ? 'bg-emerald-500/20 text-emerald-700 animate-pulse' : 'bg-slate-200 text-slate-700'}`}>
-                                                    {s.status === 'OPEN' ? 'Abierta' : 'Cerrada'}
-                                                </span>
-                                            </td>
-                                            <td className="px-4 py-4 text-center">
-                                                <div className="flex gap-2 justify-center">
-                                                    <button onClick={() => setViewReportSessionId(s.id)} className="p-1.5 bg-muted text-foreground hover:bg-muted/80 rounded-md transition-colors border shadow-sm flex items-center justify-center mx-auto" title={s.status === 'OPEN' ? 'Corte X (Parcial)' : 'Corte Z (Final)'}>
-                                                        <FileText className="h-4 w-4" />
-                                                    </button>
-                                                    {s.status === 'OPEN' && isAdmin && (
-                                                        <button onClick={() => { setSessionToClose(s); setShowCloseModal(true); }} className="p-1.5 bg-destructive text-destructive-foreground hover:bg-destructive/80 rounded-md transition-colors border shadow-sm flex items-center justify-center mx-auto" title="Forzar Cierre de Turno">
-                                                            <Lock className="h-4 w-4" />
-                                                        </button>
+                        <div className="hidden md:block h-full">
+                            <table className="w-full text-sm text-left">
+                                <thead className="bg-muted text-muted-foreground uppercase text-xs sticky top-0">
+                                    <tr>
+                                        <th className="px-4 py-3 font-semibold">Fecha / Cajero</th>
+                                        <th className="px-4 py-3 font-semibold">Caja Activa</th>
+                                        <th className="px-4 py-3 font-semibold text-right">Inicial</th>
+                                        <th className="px-4 py-3 font-semibold text-right">Final Reportado</th>
+                                        <th className="px-4 py-3 font-semibold text-center">Descuadre</th>
+                                        <th className="px-4 py-3 font-semibold text-center">Estado</th>
+                                        <th className="px-4 py-3 font-semibold text-center">Reporte</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y relative">
+                                    {sessions.map(s => {
+                                        const diff = s.discrepancy !== null ? Number(s.discrepancy) : 0;
+                                        return (
+                                            <tr key={s.id} className="hover:bg-muted/50 transition-colors group">
+                                                <td className="px-4 py-4">
+                                                    <div className="font-bold">{s.user.fullName}</div>
+                                                    <div className="text-xs text-muted-foreground">{new Date(s.openedAt).toLocaleDateString()} {new Date(s.openedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {s.closedAt ? new Date(s.closedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '...'}</div>
+                                                </td>
+                                                <td className="px-4 py-4 font-medium text-primary">{s.register.name}</td>
+                                                <td className="px-4 py-4 text-right font-mono">${Number(s.openingBalance).toFixed(2)}</td>
+                                                <td className="px-4 py-4 text-right font-mono font-bold">{s.closingBalance !== null ? `$${Number(s.closingBalance).toFixed(2)}` : '---'}</td>
+                                                <td className="px-4 py-4 text-center">
+                                                    {s.closingBalance === null ? <span className="text-muted-foreground">---</span> : (
+                                                        isAdmin ? (
+                                                            <span className={`px-2 py-0.5 rounded text-xs font-bold font-mono ${diff === 0 ? 'bg-emerald-500/10 text-emerald-600' : diff > 0 ? 'bg-amber-500/10 text-amber-600' : 'bg-destructive/10 text-destructive'}`}>
+                                                                {diff === 0 ? 'OK / CUADRADO' : diff > 0 ? `SOBRANTE: +${diff.toFixed(2)}` : `FALTANTE: ${diff.toFixed(2)}`}
+                                                            </span>
+                                                        ) : (
+                                                            <span className={`px-2 py-0.5 rounded text-xs font-bold font-mono ${diff >= 0 ? 'bg-emerald-500/10 text-emerald-600' : 'bg-destructive/10 text-destructive'}`}>
+                                                                {diff >= 0 ? 'OK / CUADRADO' : `FALTANTE: ${diff.toFixed(2)}`}
+                                                            </span>
+                                                        )
                                                     )}
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    )
-                                })}
-                                {sessions.length === 0 && !loading && (
-                                    <tr><td colSpan={6} className="text-center py-10 text-muted-foreground text-sm">No existen registros de turnos históricos.</td></tr>
-                                )}
-                            </tbody>
-                        </table>
+                                                </td>
+                                                <td className="px-4 py-4 text-center">
+                                                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${s.status === 'OPEN' ? 'bg-emerald-500/20 text-emerald-700 animate-pulse' : 'bg-slate-200 text-slate-700'}`}>
+                                                        {s.status === 'OPEN' ? 'Abierta' : 'Cerrada'}
+                                                    </span>
+                                                </td>
+                                                <td className="px-4 py-4 text-center">
+                                                    <div className="flex gap-2 justify-center">
+                                                        <button onClick={() => setViewReportSessionId(s.id)} className="p-1.5 bg-muted text-foreground hover:bg-muted/80 rounded-md transition-colors border shadow-sm flex items-center justify-center mx-auto" title={s.status === 'OPEN' ? 'Corte X (Parcial)' : 'Corte Z (Final)'}>
+                                                            <FileText className="h-4 w-4" />
+                                                        </button>
+                                                        {s.status === 'OPEN' && isAdmin && (
+                                                            <button onClick={() => { setSessionToClose(s); setShowCloseModal(true); }} className="p-1.5 bg-destructive text-destructive-foreground hover:bg-destructive/80 rounded-md transition-colors border shadow-sm flex items-center justify-center mx-auto" title="Forzar Cierre de Turno">
+                                                                <Lock className="h-4 w-4" />
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        )
+                                    })}
+                                    {sessions.length === 0 && !loading && (
+                                        <tr><td colSpan={7} className="text-center py-10 text-muted-foreground text-sm">No existen registros de turnos históricos.</td></tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {/* Mobile Card View */}
+                        <div className="md:hidden flex flex-col gap-3 p-4 bg-muted/5">
+                            {sessions.map(s => {
+                                const diff = s.discrepancy !== null ? Number(s.discrepancy) : 0;
+                                let diffColor = 'bg-muted text-muted-foreground';
+                                let diffText = '---';
+                                
+                                if (s.closingBalance !== null) {
+                                    if (diff === 0) {
+                                        diffColor = 'bg-emerald-500/10 text-emerald-600';
+                                        diffText = 'CUADRADO';
+                                    } else if (diff > 0) {
+                                        diffColor = isAdmin ? 'bg-amber-500/10 text-amber-600' : 'bg-emerald-500/10 text-emerald-600';
+                                        diffText = isAdmin ? `SOBRANTE: +${diff.toFixed(2)}` : 'CUADRADO';
+                                    } else {
+                                        diffColor = 'bg-destructive/10 text-destructive';
+                                        diffText = `FALTANTE: ${diff.toFixed(2)}`;
+                                    }
+                                }
+
+                                const isClosed = s.status !== 'OPEN';
+
+                                return (
+                                    <div key={s.id} className="bg-background border rounded-xl p-4 shadow-sm relative flex flex-col gap-3">
+                                        <div className={`absolute top-0 left-0 w-1 h-full ${isClosed ? 'bg-slate-300' : 'bg-emerald-500'}`} />
+                                        <div className="flex justify-between items-start">
+                                            <div>
+                                                <h3 className="font-bold text-sm leading-tight pr-4">{s.user.fullName}</h3>
+                                                <p className="text-[10px] text-muted-foreground mt-0.5">{new Date(s.openedAt).toLocaleDateString()} {new Date(s.openedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                                            </div>
+                                            <div className="flex gap-1 shrink-0">
+                                                <button onClick={() => setViewReportSessionId(s.id)} className="p-1.5 bg-muted text-foreground hover:bg-muted/80 rounded-md transition-colors border shadow-sm">
+                                                    <FileText className="h-4 w-4" />
+                                                </button>
+                                                {s.status === 'OPEN' && isAdmin && (
+                                                    <button onClick={() => { setSessionToClose(s); setShowCloseModal(true); }} className="p-1.5 bg-destructive text-destructive-foreground hover:bg-destructive/80 rounded-md transition-colors border shadow-sm">
+                                                        <Lock className="h-4 w-4" />
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-between items-center text-xs mt-1">
+                                            <span className="font-semibold text-primary">{s.register.name}</span>
+                                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${isClosed ? 'bg-slate-200 text-slate-700' : 'bg-emerald-500/20 text-emerald-700 animate-pulse'}`}>
+                                                {isClosed ? 'Cerrada' : 'Abierta'}
+                                            </span>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-2 mt-2 pt-3 border-t">
+                                            <div className="flex flex-col">
+                                                <span className="text-[10px] uppercase font-bold text-muted-foreground mb-0.5 tracking-wider">Inicial</span>
+                                                <span className="font-mono text-sm">${Number(s.openingBalance).toFixed(2)}</span>
+                                            </div>
+                                            <div className="flex flex-col items-end text-right">
+                                                <span className="text-[10px] uppercase font-bold text-muted-foreground mb-0.5 tracking-wider">Final</span>
+                                                <span className="font-mono text-sm font-bold">{s.closingBalance !== null ? `$${Number(s.closingBalance).toFixed(2)}` : '---'}</span>
+                                            </div>
+                                        </div>
+                                        {s.closingBalance !== null && (
+                                            <div className={`mt-2 p-2 rounded-md text-center text-xs font-bold font-mono ${diffColor}`}>
+                                                {diffText}
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                            {sessions.length === 0 && !loading && (
+                                <div className="text-center py-8 text-muted-foreground border-2 border-dashed rounded-xl border-border">
+                                    No hay históricos registrados.
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>

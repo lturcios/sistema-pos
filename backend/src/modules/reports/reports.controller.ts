@@ -303,3 +303,49 @@ export const getRegistersConsolidated = async (req: Request, res: Response, next
         next(error);
     }
 };
+
+export const getKitchenPerformance = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { branchId, startDate, endDate } = req.query as { branchId?: string, startDate?: string, endDate?: string };
+
+        const whereOrder: any = {};
+        if (branchId) whereOrder.branchId = branchId;
+
+        let dateFilter: any = {};
+        if (startDate) dateFilter.gte = new Date(startDate);
+        if (endDate) dateFilter.lte = new Date(endDate);
+        if (Object.keys(dateFilter).length > 0) whereOrder.createdAt = dateFilter;
+
+        const items = await prisma.orderItem.findMany({
+            where: {
+                productSale: { requiresPreparation: true },
+                order: whereOrder
+            },
+            include: {
+                productSale: { select: { name: true } },
+                order: { select: { id: true, tableId: true, customerId: true, status: true } }
+            },
+            orderBy: { createdAt: 'desc' },
+            take: 1000
+        });
+
+        // Resolve tables manually
+        const tableIds = [...new Set(items.map(i => i.order.tableId).filter(Boolean))] as string[];
+        const tables = tableIds.length > 0 ? await prisma.table.findMany({
+            where: { id: { in: tableIds } },
+            select: { id: true, number: true, label: true }
+        }) : [];
+
+        const mappedItems = items.map(item => ({
+            ...item,
+            order: {
+                ...item.order,
+                table: item.order.tableId ? tables.find(t => t.id === item.order.tableId) : null
+            }
+        }));
+
+        return successResponse(res, mappedItems);
+    } catch (error) {
+        next(error);
+    }
+};

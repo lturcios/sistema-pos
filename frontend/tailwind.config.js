@@ -15,8 +15,8 @@ export default {
         },
         extend: {
             fontFamily: {
-                sans: ['"Space Grotesk"', "sans-serif"],
-                mono: ['"Space Mono"', "monospace"],
+                sans: ['"Outfit"', "sans-serif"],
+                mono: ['"Nunito"', "sans-serif"],
             },
             colors: {
                 border: "hsl(var(--border))",
@@ -59,10 +59,10 @@ export default {
                 sm: "calc(var(--radius) - 4px)",
             },
             boxShadow: {
-                brutal: "6px 6px 0px 0px hsl(var(--foreground))",
-                'brutal-sm': "3px 3px 0px 0px hsl(var(--foreground))",
-                'brutal-primary': "6px 6px 0px 0px hsl(var(--primary))",
-                'brutal-accent': "6px 6px 0px 0px hsl(var(--accent))",
+                brutal: "0px 8px 24px rgba(5, 150, 105, 0.08)",
+                'brutal-sm': "0px 4px 12px rgba(5, 150, 105, 0.05)",
+                'brutal-primary': "0px 8px 24px rgba(5, 150, 105, 0.2)",
+                'brutal-accent': "0px 8px 24px rgba(217, 119, 6, 0.2)",
             },
             keyframes: {
                 "accordion-down": {

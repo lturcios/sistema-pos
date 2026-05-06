@@ -445,8 +445,8 @@ export default function Tables() {
                             </div>
                         </div>
 
-                        {/* Tabla Ordenes */}
-                        <div className="flex-1 overflow-auto">
+                        {/* Tabla Ordenes Desktop View */}
+                        <div className="hidden md:block flex-1 overflow-auto">
                             <table className="w-full text-sm text-left">
                                 <thead className="bg-foreground text-background font-black uppercase tracking-widest text-xs sticky top-0 z-10">
                                     <tr>
@@ -503,6 +503,62 @@ export default function Tables() {
                                     )}
                                 </tbody>
                             </table>
+                        </div>
+
+                        {/* Mobile Card View */}
+                        <div className="md:hidden flex flex-col gap-4 p-4 overflow-auto bg-muted/10 flex-1">
+                            {orders.map(o => {
+                                let bgClass = 'bg-background';
+                                if (o.status === 'PAID') bgClass = 'bg-emerald-500/10';
+                                if (o.status === 'OPEN') bgClass = 'bg-amber-500/10';
+                                if (o.status === 'PENDING') bgClass = 'bg-primary/10';
+                                if (o.status === 'CANCELLED') bgClass = 'bg-destructive/10';
+
+                                return (
+                                <div key={o.id} onClick={() => handleOrderClick(o)} className={`${bgClass} border-2 border-foreground p-4 relative shadow-[4px_4px_0_0_rgba(0,0,0,1)] cursor-pointer hover:opacity-80 transition-opacity ${o.status === 'CANCELLED' ? 'opacity-60' : ''}`}>
+                                    <div className="flex justify-between items-start mb-3">
+                                        <div>
+                                            <p className="font-black text-foreground text-base leading-tight">{new Date(o.createdAt).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}</p>
+                                            <p className="text-[10px] text-muted-foreground font-mono mt-1 font-bold">#{o.id.substring(0, 8).toUpperCase()}</p>
+                                        </div>
+                                        <span className={`brutal-border px-2 py-1 text-[10px] font-black uppercase tracking-widest text-center bg-background
+                                            ${o.status === 'OPEN' ? 'text-amber-700 border-amber-900' : ''}
+                                            ${o.status === 'PAID' ? 'text-emerald-700 border-emerald-900' : ''}
+                                            ${o.status === 'CANCELLED' ? 'text-destructive border-destructive' : ''}
+                                            ${o.status === 'PENDING' ? 'text-primary border-primary' : ''}
+                                        `}>
+                                            {o.status}
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between items-center mb-4">
+                                        <div className="flex items-center gap-1.5 font-bold uppercase text-xs text-foreground">
+                                            <User className="h-4 w-4" /> <span className="truncate max-w-[120px]">{o.customerId || 'CONSUMIDOR FINAL'}</span>
+                                        </div>
+                                        <div>
+                                            {o.tableId ? <span className="brutal-border px-2 py-1 text-[10px] font-black uppercase tracking-widest bg-background">EN MESA</span> : <span className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest">PARA LLEVAR</span>}
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-between items-end border-t-2 border-foreground/20 pt-3 mt-1">
+                                        <div>
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-0.5">TOTAL</p>
+                                            <p className="font-black text-xl">${Number(o.total).toFixed(2)}</p>
+                                        </div>
+                                        {(o.status === 'OPEN' || o.status === 'PENDING') && (
+                                            <div className="flex gap-2">
+                                                <button title={o.status === 'OPEN' ? "Ver/Editar" : "Ver"} onClick={(e) => { e.stopPropagation(); navigate(`/pos?orderId=${o.id}`); }} className="brutal-button bg-background text-foreground px-3 py-2 text-[10px] flex items-center justify-center">
+                                                    <Edit className="h-4 w-4" />
+                                                </button>
+                                                <button title="Cobrar" onClick={(e) => { e.stopPropagation(); setSelectedOrder(o); setPaymentAmount(o.total.toString()); setPaymentMethod('CASH'); }} className="brutal-button bg-primary text-primary-foreground px-3 py-2 text-[10px] flex items-center justify-center gap-2">
+                                                    <CreditCard className="h-4 w-4" /> COBRAR
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )})}
+                            {orders.length === 0 && !loading && (
+                                <div className="text-center py-12 text-muted-foreground font-black uppercase tracking-widest text-sm bg-background border-2 border-foreground border-dashed">No hay órdenes registradas.</div>
+                            )}
                         </div>
                     </div>
                 )}

@@ -155,39 +155,41 @@ export default function AdminPanel() {
     return (
         <div className="p-6 h-full flex flex-col bg-muted/10 relative">
 
-            <div className="flex justify-between items-end mb-6">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Administración</h1>
-                    <p className="text-muted-foreground mt-1">Configuración general y gestión de catálogos del sistema.</p>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-4">
+                <div className="w-full md:w-auto">
+                    <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Administración</h1>
+                    <p className="text-muted-foreground mt-1 text-sm md:text-base">Configuración general y gestión de catálogos del sistema.</p>
                 </div>
 
-                <button
-                    onClick={() => {
-                        setEditingId(null);
-                        if (activeTab === 'users') { setNewUser({ email: '', fullName: '', password: '', roleId: '', branchId: '', isActive: true }); setShowUserModal(true); }
-                        else if (activeTab === 'roles') { setNewRole({ name: '', description: '', permissionIds: [] }); setShowRoleModal(true); }
-                        else if (activeTab === 'branches') { setNewBranch({ name: '', code: '', address: '', phone: '', isActive: true }); setShowBranchModal(true); }
-                        else if (activeTab === 'physical_products') { setNewPhysical({ sku: '', description: '', unitMeasure: 'Unidades', costUnit: 0, minStock: 0 }); setShowPhysicalModal(true); }
-                        else if (activeTab === 'sale_products') { setNewSale({ code: '', name: '', price: 0, taxRate: 0, isExempt: false, isNonSubject: false, requiresPreparation: false }); setCompositions([]); setShowSaleModal(true); }
-                        else alert("Módulo en desarrollo");
-                    }}
-                    className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition-colors shadow-sm"
-                >
-                    <Plus className="h-4 w-4" />
-                    {activeTab === 'users' ? 'Nuevo Usuario' :
-                        activeTab === 'roles' ? 'Nuevo Rol' :
-                            activeTab === 'branches' ? 'Nueva Sucursal' :
-                                activeTab === 'physical_products' ? 'Nuevo Insumo (Físico)' : 'Nuevo Producto Venta'}
-                </button>
+                <div className="w-full md:w-auto flex justify-end">
+                    <button
+                        onClick={() => {
+                            setEditingId(null);
+                            if (activeTab === 'users') { setNewUser({ email: '', fullName: '', password: '', roleId: '', branchId: '', isActive: true }); setShowUserModal(true); }
+                            else if (activeTab === 'roles') { setNewRole({ name: '', description: '', permissionIds: [] }); setShowRoleModal(true); }
+                            else if (activeTab === 'branches') { setNewBranch({ name: '', code: '', address: '', phone: '', isActive: true }); setShowBranchModal(true); }
+                            else if (activeTab === 'physical_products') { setNewPhysical({ sku: '', description: '', unitMeasure: 'Unidades', costUnit: 0, minStock: 0 }); setShowPhysicalModal(true); }
+                            else if (activeTab === 'sale_products') { setNewSale({ code: '', name: '', price: 0, taxRate: 0, isExempt: false, isNonSubject: false, requiresPreparation: false }); setCompositions([]); setShowSaleModal(true); }
+                            else alert("Módulo en desarrollo");
+                        }}
+                        className="flex items-center justify-center w-full md:w-auto gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md font-medium hover:bg-primary/90 transition-colors shadow-sm"
+                    >
+                        <Plus className="h-4 w-4" />
+                        {activeTab === 'users' ? 'Nuevo Usuario' :
+                            activeTab === 'roles' ? 'Nuevo Rol' :
+                                activeTab === 'branches' ? 'Nueva Sucursal' :
+                                    activeTab === 'physical_products' ? 'Nuevo Insumo (Físico)' : 'Nuevo Producto Venta'}
+                    </button>
+                </div>
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-1 border-b mb-6 border-border shrink-0 overflow-x-auto scrollbar-hide">
-                <button onClick={() => { setActiveTab('users'); setEditingId(null); }} className={`whitespace-nowrap flex items-center gap-2 px-4 py-2 border-b-2 font-medium transition-colors ${activeTab === 'users' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}><Users className="h-4 w-4" /> Usuarios</button>
-                <button onClick={() => { setActiveTab('roles'); setEditingId(null); }} className={`whitespace-nowrap flex items-center gap-2 px-4 py-2 border-b-2 font-medium transition-colors ${activeTab === 'roles' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}><Shield className="h-4 w-4" /> Roles</button>
-                <button onClick={() => { setActiveTab('branches'); setEditingId(null); }} className={`whitespace-nowrap flex items-center gap-2 px-4 py-2 border-b-2 font-medium transition-colors ${activeTab === 'branches' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}><Store className="h-4 w-4" /> Sucursales</button>
-                <button onClick={() => { setActiveTab('physical_products'); setEditingId(null); }} className={`whitespace-nowrap flex items-center gap-2 px-4 py-2 border-b-2 font-medium transition-colors ${activeTab === 'physical_products' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}><Box className="h-4 w-4" /> Físicos e Insumos</button>
-                <button onClick={() => { setActiveTab('sale_products'); setEditingId(null); }} className={`whitespace-nowrap flex items-center gap-2 px-4 py-2 border-b-2 font-medium transition-colors ${activeTab === 'sale_products' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}><Tag className="h-4 w-4" /> Productos a Venta</button>
+            <div className="flex flex-wrap gap-x-6 gap-y-2 border-b mb-6 border-border shrink-0">
+                <button onClick={() => { setActiveTab('users'); setEditingId(null); }} className={`whitespace-nowrap flex items-center gap-2 px-2 pb-2 border-b-2 font-medium transition-colors ${activeTab === 'users' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}><Users className="h-4 w-4" /> Usuarios</button>
+                <button onClick={() => { setActiveTab('roles'); setEditingId(null); }} className={`whitespace-nowrap flex items-center gap-2 px-2 pb-2 border-b-2 font-medium transition-colors ${activeTab === 'roles' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}><Shield className="h-4 w-4" /> Roles</button>
+                <button onClick={() => { setActiveTab('branches'); setEditingId(null); }} className={`whitespace-nowrap flex items-center gap-2 px-2 pb-2 border-b-2 font-medium transition-colors ${activeTab === 'branches' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}><Store className="h-4 w-4" /> Sucursales</button>
+                <button onClick={() => { setActiveTab('physical_products'); setEditingId(null); }} className={`whitespace-nowrap flex items-center gap-2 px-2 pb-2 border-b-2 font-medium transition-colors ${activeTab === 'physical_products' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}><Box className="h-4 w-4" /> Físicos e Insumos</button>
+                <button onClick={() => { setActiveTab('sale_products'); setEditingId(null); }} className={`whitespace-nowrap flex items-center gap-2 px-2 pb-2 border-b-2 font-medium transition-colors ${activeTab === 'sale_products' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}><Tag className="h-4 w-4" /> Productos a Venta</button>
             </div>
 
             {/* Content Area */}
@@ -208,29 +210,64 @@ export default function AdminPanel() {
                 <div className="flex-1 overflow-auto">
                     {/* VIEW: Users */}
                     {activeTab === 'users' && (
-                        <table className="w-full text-sm text-left">
-                            <thead className="bg-muted text-muted-foreground uppercase text-xs sticky top-0">
-                                <tr><th className="px-6 py-3 font-semibold">Usuario</th><th className="px-6 py-3 font-semibold">Email</th><th className="px-6 py-3 font-semibold">Rol</th><th className="px-6 py-3 font-semibold">Sucursal</th><th className="px-6 py-3 font-semibold text-center">Estado</th><th className="px-6 py-3"></th></tr>
-                            </thead>
-                            <tbody className="divide-y">
+                        <>
+                            <div className="hidden md:block">
+                                <table className="w-full text-sm text-left">
+                                    <thead className="bg-muted text-muted-foreground uppercase text-xs sticky top-0">
+                                        <tr><th className="px-6 py-3 font-semibold">Usuario</th><th className="px-6 py-3 font-semibold">Email</th><th className="px-6 py-3 font-semibold">Rol</th><th className="px-6 py-3 font-semibold">Sucursal</th><th className="px-6 py-3 font-semibold text-center">Estado</th><th className="px-6 py-3"></th></tr>
+                                    </thead>
+                                    <tbody className="divide-y">
+                                        {users.map(u => (
+                                            <tr key={u.id} className="hover:bg-muted/50 transition-colors group">
+                                                <td className="px-6 py-4 font-bold">{u.fullName}</td>
+                                                <td className="px-6 py-4 text-muted-foreground">{u.email}</td>
+                                                <td className="px-6 py-4"><span className="bg-primary/10 text-primary px-2 py-0.5 rounded text-xs font-semibold">{u.role?.name || '---'}</span></td>
+                                                <td className="px-6 py-4 text-muted-foreground">{u.branch?.name || 'Sede Global'}</td>
+                                                <td className="px-6 py-4 text-center">
+                                                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${u.isActive ? 'bg-emerald-500/10 text-emerald-600' : 'bg-destructive/10 text-destructive'}`}>
+                                                        {u.isActive ? 'Activo' : 'Inactivo'}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4 text-right">
+                                                    <button onClick={() => { setEditingId(u.id); setNewUser({ email: u.email, fullName: u.fullName, password: '', roleId: u.roleId, branchId: u.branchId || '', isActive: u.isActive }); setShowUserModal(true); }} className="p-1.5 text-muted-foreground hover:bg-muted rounded opacity-100 transition-opacity hover:text-primary"><Edit className="h-4 w-4" /></button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {/* Mobile Card View */}
+                            <div className="md:hidden flex flex-col gap-3 p-4 bg-muted/5">
                                 {users.map(u => (
-                                    <tr key={u.id} className="hover:bg-muted/50 transition-colors group">
-                                        <td className="px-6 py-4 font-bold">{u.fullName}</td>
-                                        <td className="px-6 py-4 text-muted-foreground">{u.email}</td>
-                                        <td className="px-6 py-4"><span className="bg-primary/10 text-primary px-2 py-0.5 rounded text-xs font-semibold">{u.role?.name || '---'}</span></td>
-                                        <td className="px-6 py-4 text-muted-foreground">{u.branch?.name || 'Sede Global'}</td>
-                                        <td className="px-6 py-4 text-center">
-                                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${u.isActive ? 'bg-emerald-500/10 text-emerald-600' : 'bg-destructive/10 text-destructive'}`}>
-                                                {u.isActive ? 'Activo' : 'Inactivo'}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <button onClick={() => { setEditingId(u.id); setNewUser({ email: u.email, fullName: u.fullName, password: '', roleId: u.roleId, branchId: u.branchId || '', isActive: u.isActive }); setShowUserModal(true); }} className="p-1.5 text-muted-foreground hover:bg-muted rounded opacity-100 transition-opacity hover:text-primary"><Edit className="h-4 w-4" /></button>
-                                        </td>
-                                    </tr>
+                                    <div key={u.id} className="bg-background border rounded-xl p-4 shadow-sm relative overflow-hidden flex flex-col gap-2">
+                                        <div className={`absolute left-0 top-0 bottom-0 w-1 ${u.isActive ? 'bg-emerald-500' : 'bg-destructive'}`} />
+                                        <div className="flex justify-between items-start">
+                                            <div>
+                                                <h3 className="font-bold text-base leading-tight">{u.fullName}</h3>
+                                                <p className="text-xs text-muted-foreground mt-0.5">{u.email}</p>
+                                            </div>
+                                            <button onClick={() => { setEditingId(u.id); setNewUser({ email: u.email, fullName: u.fullName, password: '', roleId: u.roleId, branchId: u.branchId || '', isActive: u.isActive }); setShowUserModal(true); }} className="p-2 text-muted-foreground hover:bg-muted rounded-md bg-muted/30"><Edit className="h-4 w-4" /></button>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-2 mt-2 pt-3 border-t">
+                                            <div>
+                                                <span className="block text-[10px] uppercase font-bold text-muted-foreground mb-1 tracking-wider">Rol</span>
+                                                <span className="bg-primary/10 text-primary px-2 py-0.5 rounded text-xs font-semibold inline-block">{u.role?.name || '---'}</span>
+                                            </div>
+                                            <div className="text-right flex flex-col items-end">
+                                                <span className="block text-[10px] uppercase font-bold text-muted-foreground mb-1 tracking-wider">Estado</span>
+                                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider inline-block ${u.isActive ? 'bg-emerald-500/10 text-emerald-600' : 'bg-destructive/10 text-destructive'}`}>
+                                                    {u.isActive ? 'Activo' : 'Inactivo'}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div className="bg-muted/30 px-3 py-2 rounded-md mt-1">
+                                            <span className="block text-[10px] uppercase font-bold text-muted-foreground mb-0.5 tracking-wider">Sucursal</span>
+                                            <span className="text-sm font-medium">{u.branch?.name || 'Sede Global'}</span>
+                                        </div>
+                                    </div>
                                 ))}
-                            </tbody>
-                        </table>
+                            </div>
+                        </>
                     )}
 
                     {/* VIEW: Roles */}
@@ -277,50 +314,118 @@ export default function AdminPanel() {
 
                     {/* VIEW: Insumos Fisicos */}
                     {activeTab === 'physical_products' && (
-                        <table className="w-full text-sm text-left">
-                            <thead className="bg-muted text-muted-foreground uppercase text-xs sticky top-0">
-                                <tr><th className="px-6 py-3 font-semibold">SKU / Código</th><th className="px-6 py-3 font-semibold">Descripción Físia</th><th className="px-6 py-3 font-semibold">Unidad de Medida</th><th className="px-6 py-3 font-semibold text-right">Costo Unitario Ref.</th><th className="px-6 py-3 font-semibold text-center">Stock Mín.</th><th className="px-6 py-3"></th></tr>
-                            </thead>
-                            <tbody className="divide-y">
+                        <>
+                            <div className="hidden md:block">
+                                <table className="w-full text-sm text-left">
+                                    <thead className="bg-muted text-muted-foreground uppercase text-xs sticky top-0">
+                                        <tr><th className="px-6 py-3 font-semibold">SKU / Código</th><th className="px-6 py-3 font-semibold">Descripción Físia</th><th className="px-6 py-3 font-semibold">Unidad de Medida</th><th className="px-6 py-3 font-semibold text-right">Costo Unitario Ref.</th><th className="px-6 py-3 font-semibold text-center">Stock Mín.</th><th className="px-6 py-3"></th></tr>
+                                    </thead>
+                                    <tbody className="divide-y">
+                                        {physicals.map(p => (
+                                            <tr key={p.id} className="hover:bg-muted/50 transition-colors group">
+                                                <td className="px-6 py-4 font-mono font-medium text-primary">{p.sku}</td>
+                                                <td className="px-6 py-4 font-semibold">{p.description}</td>
+                                                <td className="px-6 py-4 text-muted-foreground">{p.unitMeasure}</td>
+                                                <td className="px-6 py-4 text-right font-mono">${Number(p.costUnit).toFixed(2)}</td>
+                                                <td className="px-6 py-4 text-center font-bold">{Number(p.minStock || 0)}</td>
+                                                <td className="px-6 py-4 text-right">
+                                                    <button onClick={() => { setEditingId(p.id); setNewPhysical({ sku: p.sku, description: p.description, unitMeasure: p.unitMeasure, costUnit: p.costUnit, minStock: p.minStock || 0 }); setShowPhysicalModal(true); }} className="p-1.5 text-muted-foreground hover:bg-muted rounded opacity-100 transition-opacity hover:text-primary"><Edit className="h-4 w-4" /></button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                        {physicals.length === 0 && !loading && <tr><td colSpan={6} className="text-center py-8 text-muted-foreground">Inicia creando Insumos Físicos (Materia Prima / Latas / Unidades cerradas)</td></tr>}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {/* Mobile Card View */}
+                            <div className="md:hidden flex flex-col gap-3 p-4 bg-muted/5">
                                 {physicals.map(p => (
-                                    <tr key={p.id} className="hover:bg-muted/50 transition-colors group">
-                                        <td className="px-6 py-4 font-mono font-medium text-primary">{p.sku}</td>
-                                        <td className="px-6 py-4 font-semibold">{p.description}</td>
-                                        <td className="px-6 py-4 text-muted-foreground">{p.unitMeasure}</td>
-                                        <td className="px-6 py-4 text-right font-mono">${Number(p.costUnit).toFixed(2)}</td>
-                                        <td className="px-6 py-4 text-center font-bold">{Number(p.minStock || 0)}</td>
-                                        <td className="px-6 py-4 text-right">
-                                            <button onClick={() => { setEditingId(p.id); setNewPhysical({ sku: p.sku, description: p.description, unitMeasure: p.unitMeasure, costUnit: p.costUnit, minStock: p.minStock || 0 }); setShowPhysicalModal(true); }} className="p-1.5 text-muted-foreground hover:bg-muted rounded opacity-100 transition-opacity hover:text-primary"><Edit className="h-4 w-4" /></button>
-                                        </td>
-                                    </tr>
+                                    <div key={p.id} className="bg-background border rounded-xl p-4 shadow-sm relative flex flex-col gap-3">
+                                        <div className="flex justify-between items-start">
+                                            <div>
+                                                <h3 className="font-bold text-base leading-tight pr-4">{p.description}</h3>
+                                                <p className="text-xs text-primary font-mono mt-1 font-bold">{p.sku}</p>
+                                            </div>
+                                            <button onClick={() => { setEditingId(p.id); setNewPhysical({ sku: p.sku, description: p.description, unitMeasure: p.unitMeasure, costUnit: p.costUnit, minStock: p.minStock || 0 }); setShowPhysicalModal(true); }} className="p-2 text-muted-foreground hover:bg-muted rounded-md bg-muted/30 shrink-0"><Edit className="h-4 w-4" /></button>
+                                        </div>
+                                        <div className="grid grid-cols-3 gap-2 mt-2 pt-3 border-t">
+                                            <div>
+                                                <span className="block text-[10px] uppercase font-bold text-muted-foreground mb-1 tracking-wider">U. Medida</span>
+                                                <span className="text-sm font-medium">{p.unitMeasure}</span>
+                                            </div>
+                                            <div className="text-center">
+                                                <span className="block text-[10px] uppercase font-bold text-muted-foreground mb-1 tracking-wider">Costo</span>
+                                                <span className="text-sm font-mono font-bold">${Number(p.costUnit).toFixed(2)}</span>
+                                            </div>
+                                            <div className="text-right">
+                                                <span className="block text-[10px] uppercase font-bold text-muted-foreground mb-1 tracking-wider">Min.</span>
+                                                <span className="text-sm font-mono font-bold text-amber-600">{Number(p.minStock || 0)}</span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 ))}
-                                {physicals.length === 0 && !loading && <tr><td colSpan={4} className="text-center py-8 text-muted-foreground">Inicia creando Insumos Físicos (Materia Prima / Latas / Unidades cerradas)</td></tr>}
-                            </tbody>
-                        </table>
+                                {physicals.length === 0 && !loading && <div className="text-center py-8 text-muted-foreground border-2 border-dashed rounded-xl border-border">No hay insumos físicos.</div>}
+                            </div>
+                        </>
                     )}
 
                     {/* VIEW: Productos de Venta */}
                     {activeTab === 'sale_products' && (
-                        <table className="w-full text-sm text-left">
-                            <thead className="bg-muted text-muted-foreground uppercase text-xs sticky top-0">
-                                <tr><th className="px-6 py-3 font-semibold">Código POS</th><th className="px-6 py-3 font-semibold">Nombre en Pantalla</th><th className="px-6 py-3 font-semibold text-right">Precio Facturación</th><th className="px-6 py-3 font-semibold text-center">Impuestos</th><th className="px-6 py-3 font-semibold text-center">Prep.</th><th className="px-6 py-3"></th></tr>
-                            </thead>
-                            <tbody className="divide-y">
+                        <>
+                            <div className="hidden md:block">
+                                <table className="w-full text-sm text-left">
+                                    <thead className="bg-muted text-muted-foreground uppercase text-xs sticky top-0">
+                                        <tr><th className="px-6 py-3 font-semibold">Código POS</th><th className="px-6 py-3 font-semibold">Nombre en Pantalla</th><th className="px-6 py-3 font-semibold text-right">Precio Facturación</th><th className="px-6 py-3 font-semibold text-center">Impuestos</th><th className="px-6 py-3 font-semibold text-center">Prep.</th><th className="px-6 py-3"></th></tr>
+                                    </thead>
+                                    <tbody className="divide-y">
+                                        {sales.map(s => (
+                                            <tr key={s.id} className="hover:bg-muted/50 transition-colors group">
+                                                <td className="px-6 py-4 font-mono font-medium text-emerald-600">{s.code}</td>
+                                                <td className="px-6 py-4 font-bold">{s.name}</td>
+                                                <td className="px-6 py-4 text-right font-bold text-lg">${Number(s.price).toFixed(2)}</td>
+                                                <td className="px-6 py-4 text-center text-xs">{(Number(s.taxRate) * 100).toFixed(0)}%</td>
+                                                <td className="px-6 py-4 text-center text-xs">{s.requiresPreparation ? <span className="bg-amber-500/20 text-amber-600 px-2 py-0.5 rounded font-bold">SÍ</span> : <span className="text-muted-foreground">NO</span>}</td>
+                                                <td className="px-6 py-4 text-right">
+                                                    <button onClick={() => { setEditingId(s.id); setNewSale({ code: s.code, name: s.name, price: s.price, taxRate: s.taxRate, isExempt: s.isExempt || false, isNonSubject: s.isNonSubject || false, requiresPreparation: s.requiresPreparation || false }); setCompositions(s.compositions ? s.compositions.map((c: any) => ({ productPhysicalId: c.productPhysicalId, quantityRequired: c.quantityRequired })) : []); setShowSaleModal(true); }} className="p-1.5 text-muted-foreground hover:bg-muted rounded opacity-100 transition-opacity hover:text-primary"><Edit className="h-4 w-4" /></button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                        {sales.length === 0 && !loading && <tr><td colSpan={6} className="text-center py-8 text-muted-foreground">Registra un Producto/Combo de Venta, enlazando qué Insumos rebajará</td></tr>}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {/* Mobile Card View */}
+                            <div className="md:hidden flex flex-col gap-3 p-4 bg-muted/5">
                                 {sales.map(s => (
-                                    <tr key={s.id} className="hover:bg-muted/50 transition-colors group">
-                                        <td className="px-6 py-4 font-mono font-medium text-emerald-600">{s.code}</td>
-                                        <td className="px-6 py-4 font-bold">{s.name}</td>
-                                        <td className="px-6 py-4 text-right font-bold text-lg">${Number(s.price).toFixed(2)}</td>
-                                        <td className="px-6 py-4 text-center text-xs">{(Number(s.taxRate) * 100).toFixed(0)}%</td>
-                                        <td className="px-6 py-4 text-center text-xs">{s.requiresPreparation ? <span className="bg-amber-500/20 text-amber-600 px-2 py-0.5 rounded font-bold">SÍ</span> : <span className="text-muted-foreground">NO</span>}</td>
-                                        <td className="px-6 py-4 text-right">
-                                            <button onClick={() => { setEditingId(s.id); setNewSale({ code: s.code, name: s.name, price: s.price, taxRate: s.taxRate, isExempt: s.isExempt || false, isNonSubject: s.isNonSubject || false, requiresPreparation: s.requiresPreparation || false }); setCompositions(s.compositions ? s.compositions.map((c: any) => ({ productPhysicalId: c.productPhysicalId, quantityRequired: c.quantityRequired })) : []); setShowSaleModal(true); }} className="p-1.5 text-muted-foreground hover:bg-muted rounded opacity-100 transition-opacity hover:text-primary"><Edit className="h-4 w-4" /></button>
-                                        </td>
-                                    </tr>
+                                    <div key={s.id} className="bg-background border rounded-xl p-4 shadow-sm relative flex flex-col gap-3">
+                                        <div className="flex justify-between items-start">
+                                            <div>
+                                                <h3 className="font-bold text-base leading-tight pr-4">{s.name}</h3>
+                                                <p className="text-xs text-emerald-600 font-mono mt-1 font-bold">{s.code}</p>
+                                            </div>
+                                            <button onClick={() => { setEditingId(s.id); setNewSale({ code: s.code, name: s.name, price: s.price, taxRate: s.taxRate, isExempt: s.isExempt || false, isNonSubject: s.isNonSubject || false, requiresPreparation: s.requiresPreparation || false }); setCompositions(s.compositions ? s.compositions.map((c: any) => ({ productPhysicalId: c.productPhysicalId, quantityRequired: c.quantityRequired })) : []); setShowSaleModal(true); }} className="p-2 text-muted-foreground hover:bg-muted rounded-md bg-muted/30 shrink-0"><Edit className="h-4 w-4" /></button>
+                                        </div>
+                                        <div className="flex items-center justify-between mt-1 pt-3 border-t">
+                                            <div>
+                                                <span className="block text-[10px] uppercase font-bold text-muted-foreground mb-1 tracking-wider">Precio Final</span>
+                                                <span className="text-xl font-black">${Number(s.price).toFixed(2)}</span>
+                                            </div>
+                                            <div className="flex flex-col items-end gap-2">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Impuestos:</span>
+                                                    <span className="text-xs font-mono font-bold bg-muted px-2 py-0.5 rounded">{(Number(s.taxRate) * 100).toFixed(0)}%</span>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Cocina:</span>
+                                                    {s.requiresPreparation ? <span className="bg-amber-500/20 text-amber-700 px-2 py-0.5 rounded text-[10px] font-bold">SÍ</span> : <span className="bg-muted text-muted-foreground px-2 py-0.5 rounded text-[10px] font-bold">NO</span>}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 ))}
-                                {sales.length === 0 && !loading && <tr><td colSpan={4} className="text-center py-8 text-muted-foreground">Registra un Producto/Combo de Venta, enlazando qué Insumos rebajará</td></tr>}
-                            </tbody>
-                        </table>
+                                {sales.length === 0 && !loading && <div className="text-center py-8 text-muted-foreground border-2 border-dashed rounded-xl border-border">No hay productos de venta registrados.</div>}
+                            </div>
+                        </>
                     )}
                 </div>
             </div>

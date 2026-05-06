@@ -61,16 +61,22 @@ export const getKitchenQueue = async (req: Request, res: Response, next: NextFun
 
 export const updateItemStatus = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { id } = req.params;
+        const id = req.params.id as string;
         const { status } = req.body;
 
         if (!['PENDING', 'PREPARING', 'READY', 'DELIVERED'].includes(status)) {
-            return errorResponse(res, 'Estado inválido', 400);
+            return errorResponse(res, 'Estado inválido', 'INVALID_STATUS', 400);
         }
+
+        const updateData: any = { status };
+        const now = new Date();
+        if (status === 'PREPARING') updateData.preparingAt = now;
+        else if (status === 'READY') updateData.readyAt = now;
+        else if (status === 'DELIVERED') updateData.deliveredAt = now;
 
         const item = await prisma.orderItem.update({
             where: { id },
-            data: { status }
+            data: updateData
         });
 
         return successResponse(res, item);

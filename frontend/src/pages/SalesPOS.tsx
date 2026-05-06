@@ -64,7 +64,7 @@ export default function SalesPOS() {
 
     // Cart State
     const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
-    const [cartTab, setCartTab] = useState<'detalle' | 'resumen'>('detalle');
+    const [cartTab, setCartTab] = useState<'nueva' | 'cuenta' | 'resumen'>('nueva');
     const [customerName, setCustomerName] = useState('');
 
     // Fiscal State
@@ -371,12 +371,12 @@ export default function SalesPOS() {
                 <div className="flex-1 overflow-y-auto p-4 pb-24 lg:pb-4">
                     <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                         {filteredProducts.map(product => (
-                            <button key={product.id} onClick={() => addToOrder(product)} className="flex flex-col text-left brutal-card hover:bg-muted active:shadow-none active:translate-x-[4px] active:translate-y-[4px] transition-all group overflow-hidden">
-                                <div className="h-28 bg-muted flex items-center justify-center w-full relative border-b-2 border-foreground">
+                            <button key={product.id} onClick={() => addToOrder(product)} className="flex flex-col text-left bg-card text-card-foreground border border-border/50 rounded-2xl shadow-sm hover:shadow-md hover:bg-muted transition-all group overflow-hidden">
+                                <div className="h-28 bg-muted flex items-center justify-center w-full relative border-b border-border/50">
                                     <span className="text-4xl text-muted-foreground/30 font-black group-hover:scale-110 transition-transform select-none">
                                         {product.name.charAt(0)}
                                     </span>
-                                    {product.isExempt && <span className="absolute top-2 right-2 brutal-border bg-emerald-300 text-emerald-900 px-2 py-0.5 text-[10px] font-bold">EXENTO</span>}
+                                    {product.isExempt && <span className="absolute top-2 right-2 border border-emerald-400 rounded-md bg-emerald-300 text-emerald-900 px-2 py-0.5 text-[10px] font-bold">EXENTO</span>}
                                 </div>
                                 <div className="p-3">
                                     <h3 className="font-bold text-sm line-clamp-2 leading-tight min-h-[40px] uppercase">{product.name}</h3>
@@ -407,7 +407,7 @@ export default function SalesPOS() {
             {/* Mobile Cart Toggle Button */}
             <button
                 onClick={() => setShowMobileCart(!showMobileCart)}
-                className="lg:hidden fixed bottom-6 right-6 z-40 brutal-button bg-accent text-accent-foreground p-4 shadow-brutal active:shadow-none transition-all flex items-center justify-center gap-2"
+                className="lg:hidden fixed bottom-6 right-6 z-40 rounded-full bg-accent text-accent-foreground p-4 shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2"
             >
                 {showMobileCart ? <X className="h-6 w-6" /> : (
                     <>
@@ -418,10 +418,10 @@ export default function SalesPOS() {
             </button>
 
             {/* RIGHT SECTION - Order Summary */}
-            <div className={`fixed lg:relative right-0 top-0 bottom-0 w-full lg:w-[420px] flex flex-col h-full bg-card shrink-0 z-40 lg:z-10 transition-transform duration-300 lg:translate-x-0 ${showMobileCart ? 'translate-x-0 brutal-shadow' : 'translate-x-full lg:brutal-shadow-none'} lg:border-l-2 lg:border-foreground`}>
+            <div className={`fixed lg:relative right-0 top-0 bottom-0 w-full lg:w-[420px] flex flex-col h-full bg-card shrink-0 z-40 lg:z-10 transition-transform duration-300 lg:translate-x-0 ${showMobileCart ? 'translate-x-0 shadow-2xl' : 'translate-x-full shadow-none'} lg:border-l border-border/50`}>
 
                 {/* Mesa Indicator Section */}
-                <div className="p-4 border-b-2 border-foreground bg-muted/10">
+                <div className="p-4 border-b border-border/50 bg-muted/10">
                     <div className="flex justify-between items-center mb-3">
                         <h2 className="text-xl font-black uppercase tracking-widest flex items-center gap-2">
                             ORDEN
@@ -458,11 +458,15 @@ export default function SalesPOS() {
                         >
                             <option value="">Nueva Cuenta: Llevar / Delivery</option>
                             <optgroup label="Tus Mesas Mapeadas">
-                                {tables.map(t => (
-                                    <option key={`table_${t.id}`} value={t.id} disabled={t.status === 'OCCUPIED' && t.id !== selectedTableId}>
-                                        {t.status === 'OCCUPIED' ? '🔴' : '🟢'} Mesa {t.number} {t.label ? `- ${t.label}` : ''} {(t.status === 'OCCUPIED' && t.id !== selectedTableId) ? '(Ocupada)' : ''}
-                                    </option>
-                                ))}
+                                {tables.map(t => {
+                                    const order = openOrders.find(o => o.tableId === t.id);
+                                    const val = order ? `order_${order.id}` : t.id;
+                                    return (
+                                        <option key={`table_${t.id}`} value={val}>
+                                            {t.status === 'OCCUPIED' ? '🔴' : '🟢'} Mesa {t.number} {t.label ? `- ${t.label}` : ''}
+                                        </option>
+                                    );
+                                })}
                             </optgroup>
 
                             {openOrders.filter(o => o.tableId === null).length > 0 && (
@@ -490,35 +494,62 @@ export default function SalesPOS() {
                     </div>
 
                     <div className="mt-3">
-                        <button onClick={() => navigate('/tables')} className="w-full py-1.5 border border-border bg-background rounded-lg text-xs font-bold text-muted-foreground hover:text-foreground hover:bg-muted transition-colors flex items-center justify-center gap-2 uppercase tracking-wide">
-                            <MapPin className="h-3 w-3" />
+                        <button onClick={() => navigate('/tables')} className="w-full py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-bold shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 uppercase tracking-wide">
+                            <MapPin className="h-4 w-4" />
                             Volver al Mapa de Mesas
                         </button>
                     </div>
                 </div>
 
                 {/* Tabs Checkout */}
-                <div className="flex border-b-2 border-foreground text-sm font-bold uppercase tracking-wider">
-                    <button onClick={() => setCartTab('detalle')} className={`flex-1 py-3 flex items-center justify-center gap-2 brutal-border border-t-0 border-l-0 ${cartTab === 'detalle' ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-muted'}`}>
-                        <List className="h-4 w-4" /> Detalle
+                <div className="flex border-b border-border/50 text-xs font-bold uppercase tracking-wider bg-muted/10">
+                    <button onClick={() => setCartTab('nueva')} className={`flex-1 py-3 flex items-center justify-center gap-1 border-r border-border/50 transition-colors ${cartTab === 'nueva' ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-muted'}`}>
+                        <Plus className="h-3.5 w-3.5" /> Nueva Orden
                     </button>
-                    <button onClick={() => setCartTab('resumen')} className={`flex-1 py-3 flex items-center justify-center gap-2 brutal-border border-t-0 border-r-0 ${cartTab === 'resumen' ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-muted'}`}>
-                        <Layers className="h-4 w-4" /> Resumen
+                    <button onClick={() => setCartTab('cuenta')} className={`flex-1 py-3 flex items-center justify-center gap-1 border-r border-border/50 transition-colors ${cartTab === 'cuenta' ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-muted'}`}>
+                        <List className="h-3.5 w-3.5" /> Cuenta
+                    </button>
+                    <button onClick={() => setCartTab('resumen')} className={`flex-1 py-3 flex items-center justify-center gap-1 transition-colors ${cartTab === 'resumen' ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-muted'}`}>
+                        <Layers className="h-3.5 w-3.5" /> Resumen
                     </button>
                 </div>
 
                 {/* Order Items List */}
                 <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3 relative">
-                    {orderItems.length === 0 ? (
-                        <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground opacity-60 m-auto mt-20">
-                            <ShoppingCart className="h-16 w-16 mb-4 stroke-1" />
-                            <p className="font-medium text-lg text-foreground/80">Orden vacía</p>
-                            <p className="text-sm">Toca productos para agregarlos</p>
-                        </div>
+                    {cartTab === 'resumen' ? (
+                        orderItems.length === 0 ? (
+                            <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground opacity-60 m-auto mt-20">
+                                <ShoppingCart className="h-16 w-16 mb-4 stroke-1" />
+                                <p className="font-medium text-lg text-foreground/80">Orden vacía</p>
+                            </div>
+                        ) : (
+                            <div className="bg-background rounded-xl border p-4 shadow-sm flex flex-col gap-2">
+                                <h3 className="font-bold text-sm mb-2 border-b pb-2 text-muted-foreground uppercase tracking-wider">Consolidado Total</h3>
+                                {summaryItems.map((sItem, idx) => (
+                                    <div key={idx} className="flex justify-between items-center py-2 border-b border-border/50 last:border-0">
+                                        <div className="flex items-center gap-3">
+                                            <span className="bg-primary/10 text-primary font-bold px-2 py-0.5 rounded w-8 text-center">{sItem.qty}x</span>
+                                            <span className="font-semibold text-sm">{sItem.name}</span>
+                                        </div>
+                                        <span className="font-bold whitespace-nowrap">${(sItem.price * sItem.qty).toFixed(2)}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        )
                     ) : (
-                        cartTab === 'detalle' ? (
-                            orderItems.map((item, idx) => (
-                                <div key={item.cartId} className={`flex flex-col border border-border/50 bg-background rounded-lg p-3 shadow-sm relative group overflow-hidden ${item.isSaved ? 'opacity-80' : 'new-item-glow'}`}>
+                        (() => {
+                            const displayItems = orderItems.filter(item => cartTab === 'nueva' ? !item.isSaved : item.isSaved);
+                            if (displayItems.length === 0) {
+                                return (
+                                    <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground opacity-60 m-auto mt-20 text-center px-4">
+                                        {cartTab === 'nueva' ? <Plus className="h-16 w-16 mb-4 stroke-1 opacity-50" /> : <List className="h-16 w-16 mb-4 stroke-1 opacity-50" />}
+                                        <p className="font-medium text-lg text-foreground/80">{cartTab === 'nueva' ? 'Nueva Orden Vacía' : 'Cuenta Vacía'}</p>
+                                        <p className="text-sm mt-1">{cartTab === 'nueva' ? 'Toca productos para agregar a esta orden' : 'No hay productos guardados en esta cuenta'}</p>
+                                    </div>
+                                );
+                            }
+                            return displayItems.map((item, idx) => (
+                                <div key={item.cartId} className={`flex flex-col shrink-0 border border-border/50 bg-background rounded-xl p-3 shadow-sm relative group overflow-hidden transition-colors hover:shadow-md ${item.isSaved ? 'opacity-80' : 'new-item-glow'}`}>
                                     <div className={`absolute left-0 top-0 bottom-0 w-1 transform scale-y-0 group-hover:scale-y-100 transition-transform origin-bottom ${item.isSaved ? 'bg-muted-foreground' : 'bg-primary'}`} />
                                     <div className="flex justify-between items-start">
                                         <span className="font-semibold text-sm pr-4 leading-tight flex items-center gap-2">
@@ -558,26 +589,13 @@ export default function SalesPOS() {
                                         </div>
                                     </div>
                                 </div>
-                            ))
-                        ) : (
-                            <div className="bg-background rounded-xl border p-4 shadow-sm flex flex-col gap-2">
-                                <h3 className="font-bold text-sm mb-2 border-b pb-2 text-muted-foreground uppercase tracking-wider">Consolidado Total</h3>
-                                {summaryItems.map((sItem, idx) => (
-                                    <div key={idx} className="flex justify-between items-center py-2 border-b border-border/50 last:border-0">
-                                        <div className="flex items-center gap-3">
-                                            <span className="bg-primary/10 text-primary font-bold px-2 py-0.5 rounded w-8 text-center">{sItem.qty}x</span>
-                                            <span className="font-semibold text-sm">{sItem.name}</span>
-                                        </div>
-                                        <span className="font-bold whitespace-nowrap">${(sItem.price * sItem.qty).toFixed(2)}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        )
+                            ));
+                        })()
                     )}
                 </div>
 
                 {/* Totals & Fiscal Checkout */}
-                <div className="border-t-2 border-foreground bg-card shrink-0">
+                <div className="border-t border-border/50 bg-card shrink-0">
 
                     {/* Docs & Retentions */}
                     <div className="px-5 py-3 border-b bg-muted/10 grid grid-cols-2 gap-3 items-center">
@@ -620,7 +638,7 @@ export default function SalesPOS() {
                         <button
                             onClick={processOrder}
                             disabled={orderItems.length === 0 || loading}
-                            className="w-full relative flex items-center justify-center gap-2 brutal-button bg-card py-4 font-black uppercase text-sm tracking-wide"
+                            className="w-full relative flex items-center justify-center gap-2 rounded-xl border border-border/50 bg-card py-4 font-black uppercase text-sm tracking-wide shadow-sm hover:shadow-md transition-all active:scale-95 disabled:opacity-50"
                         >
                             <Ticket className="h-5 w-5" />
                             {existingOrderId ? 'ACTUALIZAR COMANDA' : 'GUARDAR COMANDA'}
@@ -632,7 +650,7 @@ export default function SalesPOS() {
                                 setShowPaymentModal(true);
                             }}
                             disabled={orderItems.length === 0 || loading}
-                            className="w-full relative flex items-center justify-center gap-2 brutal-button !shadow-brutal-primary !bg-primary text-primary-foreground py-5 font-black text-lg hover:brightness-110 uppercase tracking-widest"
+                            className="w-full relative flex items-center justify-center gap-2 rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/20 py-5 font-black text-lg hover:bg-primary/90 uppercase tracking-widest transition-all active:scale-95 disabled:opacity-50"
                         >
                             <Wallet className="h-6 w-6" />
                             COBRAR DIRECTO
