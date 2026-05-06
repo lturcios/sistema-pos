@@ -1,0 +1,455 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String  @id @default(uuid())
+  email        String  @unique
+  passwordHash String
+  fullName     String
+  isActive     Boolean @default(true)
+  branchId     String?
+  roleId       String
+
+  branch Branch? @relation(fields: [branchId], references: [id])
+  role   Role    @relation(fields: [roleId], references: [id])
+
+  orders        Order[]
+  refreshTokens RefreshToken[]
+  counts        InventoryCount[]
+  cashSessions  CashSession[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+}
+
+model Role {
+  id          String  @id @default(uuid())
+  name        String  @unique
+  description String?
+
+  permissions Permission[]
+  users       User[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+}
+
+model Permission {
+  id          String  @id @default(uuid())
+  resource    String // e.g "products", "orders", "users"
+  action      String // e.g "create", "read", "update", "delete"
+  description String? @db.Text
+
+  roles Role[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+}
+
+model Branch {
+  id       String  @id @default(uuid())
+  name     String
+  code     String  @unique
+  address  String?
+  phone    String?
+  isActive Boolean @default(true)
+
+  users          User[]
+  stocks         Stock[]
+  stockMovements StockMovement[]
+  tables         Table[]
+  orders         Order[]
+  counts         InventoryCount[]
+  priceOverrides BranchPriceOverride[]
+  cashRegisters  CashRegister[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+}
+
+model ProductPhysical {
+  id          String  @id @default(uuid())
+  sku         String  @unique
+  description String
+  unitMeasure String
+  costUnit    Decimal @db.Decimal(10, 2)
+  minStock    Decimal @default(0) @db.Decimal(10, 4)
+
+  stocks         Stock[]
+  stockMovements StockMovement[]
+  compositions   SaleComposition[]
+  countLines     InventoryCountLine[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+}
+
+model ProductSale {
+  id                  String  @id @default(uuid())
+  code                String  @unique
+  name                String
+  price               Decimal @db.Decimal(10, 2)
+  taxRate             Decimal @default(0) @db.Decimal(5, 2)
+  categoryId          String?
+  imageUrl            String?
+  isExempt            Boolean @default(false)
+  isNonSubject        Boolean @default(false)
+  requiresPreparation Boolean @default(false)
+
+  category Category? @relation(fields: [categoryId], references: [id])
+
+  compositions   SaleComposition[]
+  orderItems     OrderItem[]
+  priceOverrides BranchPriceOverride[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+}
+
+model SaleComposition {
+  id                String  @id @default(uuid())
+  productSaleId     String
+  productPhysicalId String
+  quantityRequired  Decimal @db.Decimal(10, 4)
+
+  productSale     ProductSale     @relation(fields: [productSaleId], references: [id], onDelete: Cascade)
+  productPhysical ProductPhysical @relation(fields: [productPhysicalId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+
+  @@unique([productSaleId, productPhysicalId])
+}
+
+model Category {
+  id        String  @id @default(uuid())
+  name      String
+  icon      String?
+  sortOrder Int     @default(0)
+  parentId  String?
+
+  parent   Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children Category[] @relation("CategoryHierarchy")
+
+  products ProductSale[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+}
+
+model UnitConversion {
+  id       String  @id @default(uuid())
+  fromUnit String
+  toUnit   String
+  factor   Decimal @db.Decimal(10, 4)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+
+  @@unique([fromUnit, toUnit])
+}
+
+model Stock {
+  id                String  @id @default(uuid())
+  productPhysicalId String
+  branchId          String
+  quantity          Decimal @db.Decimal(10, 4)
+  minStock          Decimal @default(0) @db.Decimal(10, 4)
+
+  productPhysical ProductPhysical @relation(fields: [productPhysicalId], references: [id])
+  branch          Branch          @relation(fields: [branchId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+
+  @@unique([productPhysicalId, branchId])
+}
+
+enum MovementType {
+  IN
+  OUT
+  SALE
+  ADJUSTMENT
+  TRANSFER
+}
+
+model StockMovement {
+  id                String       @id @default(uuid())
+  productPhysicalId String
+  branchId          String
+  qty               Decimal      @db.Decimal(10, 4)
+  type              MovementType
+  cost              Decimal      @db.Decimal(10, 2)
+  reference         String?
+  date              DateTime     @default(now())
+
+  productPhysical ProductPhysical @relation(fields: [productPhysicalId], references: [id])
+  branch          Branch          @relation(fields: [branchId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+
+  @@index([branchId, date])
+}
+
+enum TableStatus {
+  AVAILABLE
+  OCCUPIED
+  RESERVED
+}
+
+model Table {
+  id       String      @id @default(uuid())
+  branchId String
+  number   String
+  label    String?
+  capacity Int         @default(4)
+  status   TableStatus @default(AVAILABLE)
+
+  colorTheme String @default("default")
+
+  branch Branch @relation(fields: [branchId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+}
+
+enum OrderStatus {
+  OPEN
+  PENDING
+  PAID
+  CANCELLED
+}
+
+model Order {
+  id         String      @id @default(uuid())
+  branchId   String
+  tableId    String?
+  customerId String?
+  status     OrderStatus @default(OPEN)
+  subtotal   Decimal     @default(0) @db.Decimal(10, 2)
+  taxTotal   Decimal     @default(0) @db.Decimal(10, 2)
+  total      Decimal     @default(0) @db.Decimal(10, 2)
+
+  branch Branch @relation(fields: [branchId], references: [id])
+  user   User?  @relation(fields: [createdBy], references: [id])
+
+  items    OrderItem[]
+  payments Payment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+
+  @@index([branchId, status, createdAt])
+}
+
+enum OrderItemStatus {
+  PENDING
+  PREPARING
+  READY
+  DELIVERED
+}
+
+model OrderItem {
+  id            String  @id @default(uuid())
+  orderId       String
+  productSaleId String
+  qty           Decimal @db.Decimal(10, 4)
+  unitPrice     Decimal @db.Decimal(10, 2)
+  discount      Decimal @default(0) @db.Decimal(10, 2)
+  notes         String?
+  status        OrderItemStatus @default(PENDING)
+
+  order       Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productSale ProductSale @relation(fields: [productSaleId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  TRANSFER
+  OTHER
+}
+
+model Payment {
+  id        String        @id @default(uuid())
+  orderId   String
+  method    PaymentMethod
+  amount    Decimal       @db.Decimal(10, 2)
+  reference String?
+  paidAt    DateTime      @default(now())
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+}
+
+enum CountStatus {
+  DRAFT
+  COMPLETED
+  CANCELLED
+}
+
+model InventoryCount {
+  id       String      @id @default(uuid())
+  branchId String
+  userId   String
+  status   CountStatus @default(DRAFT)
+  date     DateTime    @default(now())
+
+  branch Branch               @relation(fields: [branchId], references: [id])
+  user   User                 @relation(fields: [userId], references: [id])
+  lines  InventoryCountLine[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+}
+
+model InventoryCountLine {
+  id                String  @id @default(uuid())
+  countId           String
+  productPhysicalId String
+  expectedQty       Decimal @db.Decimal(10, 4)
+  countedQty        Decimal @db.Decimal(10, 4)
+
+  count           InventoryCount  @relation(fields: [countId], references: [id], onDelete: Cascade)
+  productPhysical ProductPhysical @relation(fields: [productPhysicalId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+}
+
+model BranchPriceOverride {
+  id            String  @id @default(uuid())
+  branchId      String
+  productSaleId String
+  overridePrice Decimal @db.Decimal(10, 2)
+
+  branch      Branch      @relation(fields: [branchId], references: [id])
+  productSale ProductSale @relation(fields: [productSaleId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+
+  @@unique([branchId, productSaleId])
+}
+
+model RefreshToken {
+  id          String   @id @default(uuid())
+  hashedToken String   @unique
+  userId      String
+  expiresAt   DateTime
+  revoked     Boolean  @default(false)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String?
+  action     String
+  resource   String
+  resourceId String?
+  oldData    Json?
+  newData    Json?
+  ip         String?
+  date       DateTime @default(now())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CashRegister {
+  id       String  @id @default(uuid())
+  branchId String
+  name     String
+  isActive Boolean @default(true)
+
+  branch   Branch        @relation(fields: [branchId], references: [id])
+  sessions CashSession[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+}
+
+enum CashSessionStatus {
+  OPEN
+  CLOSED
+}
+
+model CashSession {
+  id              String            @id @default(uuid())
+  registerId      String
+  userId          String
+  status          CashSessionStatus @default(OPEN)
+  openedAt        DateTime          @default(now())
+  closedAt        DateTime?
+  openingBalance  Decimal           @db.Decimal(10, 2)
+  closingBalance  Decimal?          @db.Decimal(10, 2)
+  expectedBalance Decimal?          @db.Decimal(10, 2)
+  discrepancy     Decimal?          @db.Decimal(10, 2)
+  notes           String?
+
+  register     CashRegister      @relation(fields: [registerId], references: [id])
+  user         User              @relation(fields: [userId], references: [id])
+  transactions CashTransaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+}
+
+enum CashTransactionType {
+  SALE
+  REFUND
+  INCOME
+  EXPENSE
+}
+
+model CashTransaction {
+  id          String              @id @default(uuid())
+  sessionId   String
+  type        CashTransactionType
+  amount      Decimal             @db.Decimal(10, 2)
+  reference   String?
+  description String?
+  date        DateTime            @default(now())
+
+  session CashSession @relation(fields: [sessionId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+}

@@ -1,0 +1,362 @@
+[
+  {
+    "id": "00e0eddf-a104-44bf-a3b1-60a4a4a0710f",
+    "resource": "inventory",
+    "action": "create",
+    "description": "Ingresar traslados y movimientos iniciales de inventario",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.505Z",
+    "createdBy": null
+  },
+  {
+    "id": "01b413f2-9397-49f0-98d9-0162bcbe073b",
+    "resource": "users",
+    "action": "read",
+    "description": "Ver el listado general de usuarios",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.434Z",
+    "createdBy": null
+  },
+  {
+    "id": "02db7c1c-8c32-4ba4-9dcd-c3214c3e5c7a",
+    "resource": "reports",
+    "action": "read",
+    "description": "Tener acceso al módulo de analíticas y métricas de desempeño",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.609Z",
+    "createdBy": null
+  },
+  {
+    "id": "09698c70-bdd7-4d43-bb44-a7b5adcd9330",
+    "resource": "sales",
+    "action": "update",
+    "description": "Modificar órdenes abiertas o en curso (agregar/quitar items)",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.563Z",
+    "createdBy": null
+  },
+  {
+    "id": "0df68388-ea00-4dbc-9d5e-8913d394e3da",
+    "resource": "settings",
+    "action": "delete",
+    "description": "Remover ajustes",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.639Z",
+    "createdBy": null
+  },
+  {
+    "id": "159ef947-6769-4650-9fa5-653f18165abb",
+    "resource": "inventory",
+    "action": "reconcile",
+    "description": "Conciliar conteos ciegos (Afectación real al Kardex)",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.527Z",
+    "createdBy": null
+  },
+  {
+    "id": "1703babc-b70f-462b-9d3b-ef17ab6a0555",
+    "resource": "inventory",
+    "action": "delete",
+    "description": "Anular movimientos de inventario",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.522Z",
+    "createdBy": null
+  },
+  {
+    "id": "1c5c25ea-0e99-4e58-b5c9-c5891fa2d239",
+    "resource": "inventory",
+    "action": "read",
+    "description": "Ver historiales de kardex y recuentos de insumos",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.511Z",
+    "createdBy": null
+  },
+  {
+    "id": "2c6d12f8-57d1-4a38-a317-180fced007c7",
+    "resource": "branches",
+    "action": "read",
+    "description": "Ver información de las sucursales",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.486Z",
+    "createdBy": null
+  },
+  {
+    "id": "36c75921-c6b5-4565-8fa8-903c7ec0e3cb",
+    "resource": "roles",
+    "action": "update",
+    "description": "Modificar los permisos y configuraciones de un rol",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.465Z",
+    "createdBy": null
+  },
+  {
+    "id": "403127c1-f020-42da-a060-3f874b78d0ba",
+    "resource": "cash",
+    "action": "delete",
+    "description": "Eliminar operaciones de caja",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.588Z",
+    "createdBy": null
+  },
+  {
+    "id": "47a0eda3-b173-4ac0-a34c-e35618044f7c",
+    "resource": "settings",
+    "action": "update",
+    "description": "Cambiar configuración general (como tipo de moneda, impuestos globales)",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.633Z",
+    "createdBy": null
+  },
+  {
+    "id": "5e7c9ee9-3bee-40c6-8f9d-9e9c4f49f196",
+    "resource": "cash",
+    "action": "create",
+    "description": "Crear abonos monetarios y registros directos",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.574Z",
+    "createdBy": null
+  },
+  {
+    "id": "6c9a4f80-d9a9-4659-ac81-0835331066b7",
+    "resource": "branches",
+    "action": "update",
+    "description": "Actualizar configuración de las sucursales",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.492Z",
+    "createdBy": null
+  },
+  {
+    "id": "711235cc-efcf-456a-9ab6-55f266420287",
+    "resource": "sales",
+    "action": "void",
+    "description": "Anular pedidos y órdenes ya facturadas",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.571Z",
+    "createdBy": null
+  },
+  {
+    "id": "794a3080-0617-4968-8d7c-95adba69029a",
+    "resource": "products",
+    "action": "update",
+    "description": "Modificar fórmulas, recetas, precios y descripciones de los productos",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.543Z",
+    "createdBy": null
+  },
+  {
+    "id": "93389380-5edc-439e-9f66-e10d6aa8e544",
+    "resource": "products",
+    "action": "create",
+    "description": "Agregar nuevos productos para la venta o bodega",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.533Z",
+    "createdBy": null
+  },
+  {
+    "id": "960fa1f4-95c9-434d-9c22-534c58715693",
+    "resource": "sales",
+    "action": "read",
+    "description": "Consultar el historial de ventas y órdenes realizadas",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.558Z",
+    "createdBy": null
+  },
+  {
+    "id": "9b1a0fb8-d43a-4c00-80bd-3915ed881fa3",
+    "resource": "cash",
+    "action": "update",
+    "description": "Modificar registros en un turno de caja (ajustes)",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.583Z",
+    "createdBy": null
+  },
+  {
+    "id": "a26a8cdb-9764-42e6-9a85-7c03427d6b4e",
+    "resource": "reports",
+    "action": "delete",
+    "description": "Eliminar reportes",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.619Z",
+    "createdBy": null
+  },
+  {
+    "id": "a533589d-1840-4a5a-a421-23eb37c622db",
+    "resource": "cash",
+    "action": "close",
+    "description": "Cerrar y cuadrar caja (Arqueo/Corte)",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.598Z",
+    "createdBy": null
+  },
+  {
+    "id": "a63b2bcc-72ba-4239-8163-2cdef825b32a",
+    "resource": "settings",
+    "action": "read",
+    "description": "Ver la configuración maestra del sistema",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.628Z",
+    "createdBy": null
+  },
+  {
+    "id": "ae7cf8bc-7b77-4ac6-b28b-7fa0adcdca5c",
+    "resource": "sales",
+    "action": "create",
+    "description": "Crear y registrar nuevas ventas/órdenes en el sistema",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.553Z",
+    "createdBy": null
+  },
+  {
+    "id": "b2568362-7fef-48de-9612-65fc0d591dac",
+    "resource": "cash",
+    "action": "read",
+    "description": "Ver transacciones realizadas por caja",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.578Z",
+    "createdBy": null
+  },
+  {
+    "id": "b929eacd-82b3-47a7-9277-acb71d37fd17",
+    "resource": "users",
+    "action": "create",
+    "description": "Crear nuevos usuarios en el sistema",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.423Z",
+    "createdBy": null
+  },
+  {
+    "id": "ba3bf0c6-7f06-46b7-9e52-41278ebd5995",
+    "resource": "settings",
+    "action": "create",
+    "description": "Generar credenciales o configuraciones nuevas",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.623Z",
+    "createdBy": null
+  },
+  {
+    "id": "bc1c2adb-c51c-4709-b051-9fa624c72674",
+    "resource": "branches",
+    "action": "create",
+    "description": "Crear nuevas sucursales",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.480Z",
+    "createdBy": null
+  },
+  {
+    "id": "be46e635-16e5-4e3e-b2c4-6a9cb8f529d6",
+    "resource": "products",
+    "action": "read",
+    "description": "Ver catálogo de productos de venta y bodega",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.538Z",
+    "createdBy": null
+  },
+  {
+    "id": "bfa9e93f-b9d3-48dd-8012-b884a39d0518",
+    "resource": "reports",
+    "action": "update",
+    "description": "Guardar/modificar perfiles de reportes base",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.614Z",
+    "createdBy": null
+  },
+  {
+    "id": "c5f553b2-b48b-4d94-9a3e-312bc296e7a2",
+    "resource": "inventory",
+    "action": "update",
+    "description": "Realizar ajustes directos al inventario (ingresos/egresos manuales y conteos)",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.517Z",
+    "createdBy": null
+  },
+  {
+    "id": "cff92102-921c-40ab-bb30-8ed846378337",
+    "resource": "users",
+    "action": "delete",
+    "description": "Eliminar o desactivar usuarios permanentemente",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.447Z",
+    "createdBy": null
+  },
+  {
+    "id": "d191b359-861e-4db8-b50b-b430ca7834dc",
+    "resource": "roles",
+    "action": "read",
+    "description": "Ver la lista de roles del sistema",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.459Z",
+    "createdBy": null
+  },
+  {
+    "id": "d2e3f28b-4001-4ac5-b5b1-0a7f9b80dc40",
+    "resource": "users",
+    "action": "update",
+    "description": "Editar datos y reasignar roles/sucursales de usuarios",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.440Z",
+    "createdBy": null
+  },
+  {
+    "id": "d634496b-c6fa-453d-9ee8-548aea1fba4d",
+    "resource": "products",
+    "action": "delete",
+    "description": "Borrar productos del catálogo principal",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.547Z",
+    "createdBy": null
+  },
+  {
+    "id": "dc888fa3-4051-4a85-94ce-2a4676db6537",
+    "resource": "sales",
+    "action": "delete",
+    "description": "Borrar/Cancelar órdenes y ventas en curso",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.567Z",
+    "createdBy": null
+  },
+  {
+    "id": "e8d08a88-58fe-4c31-a9e4-16ee9d5e5459",
+    "resource": "roles",
+    "action": "create",
+    "description": "Crear nuevos perfiles y roles de acceso",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.452Z",
+    "createdBy": null
+  },
+  {
+    "id": "ec0fd699-b8de-4aa2-86e2-86b1112b2118",
+    "resource": "branches",
+    "action": "delete",
+    "description": "Eliminar sucursales",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.498Z",
+    "createdBy": null
+  },
+  {
+    "id": "f5290a12-1608-4ff1-be78-7938e9b34b73",
+    "resource": "roles",
+    "action": "delete",
+    "description": "Eliminar roles permanentemente",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.473Z",
+    "createdBy": null
+  },
+  {
+    "id": "f68e047b-ad0e-4a2b-9f51-fdda0aa63ca4",
+    "resource": "cash",
+    "action": "open",
+    "description": "Aperturar un turno de caja de dinero",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.592Z",
+    "createdBy": null
+  },
+  {
+    "id": "faa6e396-f016-4ed0-8850-efd12390c97f",
+    "resource": "reports",
+    "action": "create",
+    "description": "Generar reportes a demanda",
+    "createdAt": "2026-03-04T03:08:46.434Z",
+    "updatedAt": "2026-03-04T03:15:22.604Z",
+    "createdBy": null
+  }
+]
