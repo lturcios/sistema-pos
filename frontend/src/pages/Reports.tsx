@@ -5,7 +5,7 @@ import {
     BarChart, Bar
 } from 'recharts';
 import { TrendingUp, Box, DollarSign, Calendar, FileSpreadsheet, Loader2, AlertTriangle, Printer } from 'lucide-react';
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 
 export default function Reports() {
     const [loading, setLoading] = useState(false);
@@ -82,35 +82,74 @@ export default function Reports() {
         }
     };
 
-    const exportToExcel = () => {
-        const wb = XLSX.utils.book_new();
+    const exportToExcel = async () => {
+        const workbook = new ExcelJS.Workbook();
 
         // Sheet 1: Ventas Diarias
-        const wsVentas = XLSX.utils.json_to_sheet(salesChartData.map(d => ({ Fecha: d.date, Ventas: Number(d.ventas) })));
-        XLSX.utils.book_append_sheet(wb, wsVentas, "Ventas Diarias");
+        const wsVentas = workbook.addWorksheet("Ventas Diarias");
+        wsVentas.columns = [
+            { header: "Fecha", key: "fecha", width: 15 },
+            { header: "Ventas", key: "ventas", width: 15 }
+        ];
+        wsVentas.getRow(1).font = { bold: true };
+        salesChartData.forEach(d => {
+            wsVentas.addRow({
+                fecha: d.date,
+                ventas: Number(d.ventas)
+            });
+        });
 
         // Sheet 2: Productos Estrella
-        const wsProductos = XLSX.utils.json_to_sheet(topProducts.map(p => ({
-            Código: p.code,
-            Producto: p.name,
-            Categoría: p.category,
-            "Cant. Vendida": p.totalSold
-        })));
-        XLSX.utils.book_append_sheet(wb, wsProductos, "Top Productos");
+        const wsProductos = workbook.addWorksheet("Top Productos");
+        wsProductos.columns = [
+            { header: "Código", key: "codigo", width: 15 },
+            { header: "Producto", key: "producto", width: 25 },
+            { header: "Categoría", key: "categoria", width: 20 },
+            { header: "Cant. Vendida", key: "cantVendida", width: 15 }
+        ];
+        wsProductos.getRow(1).font = { bold: true };
+        topProducts.forEach(p => {
+            wsProductos.addRow({
+                codigo: p.code,
+                producto: p.name,
+                categoria: p.category,
+                cantVendida: p.totalSold
+            });
+        });
 
         // Sheet 3: Alertas de Inventario
-        const wsAlertas = XLSX.utils.json_to_sheet(lowStockAlerts.map(a => ({
-            SKU: a.sku,
-            Insumo: a.name,
-            Sucursal: a.branch,
-            "Stock Actual": `${a.currentStock} ${a.unit}`,
-            "Stock Mínimo": `${a.minStock} ${a.unit}`,
-            Estado: a.status === 'CRITICAL' ? 'CRÍTICO (Agotado)' : 'BAJO'
-        })));
-        XLSX.utils.book_append_sheet(wb, wsAlertas, "Alertas Stock");
+        const wsAlertas = workbook.addWorksheet("Alertas Stock");
+        wsAlertas.columns = [
+            { header: "SKU", key: "sku", width: 15 },
+            { header: "Insumo", key: "insumo", width: 25 },
+            { header: "Sucursal", key: "sucursal", width: 20 },
+            { header: "Stock Actual", key: "stockActual", width: 15 },
+            { header: "Stock Mínimo", key: "stockMinimo", width: 15 },
+            { header: "Estado", key: "estado", width: 20 }
+        ];
+        wsAlertas.getRow(1).font = { bold: true };
+        lowStockAlerts.forEach(a => {
+            wsAlertas.addRow({
+                sku: a.sku,
+                insumo: a.name,
+                sucursal: a.branch,
+                stockActual: `${a.currentStock} ${a.unit}`,
+                stockMinimo: `${a.minStock} ${a.unit}`,
+                estado: a.status === 'CRITICAL' ? 'CRÍTICO (Agotado)' : 'BAJO'
+            });
+        });
 
-        XLSX.writeFile(wb, `Reporte_General_Ventas.xlsx`);
+        // Generar buffer y descargar
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const url = window.URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = `Reporte_General_Ventas.xlsx`;
+        anchor.click();
+        window.URL.revokeObjectURL(url);
     };
+
 
     const handleQuickDate = (preset: 'TODAY' | 'WEEK' | 'FORTNIGHT' | 'MONTH' | 'QUARTER' | 'YEAR') => {
         const today = new Date();

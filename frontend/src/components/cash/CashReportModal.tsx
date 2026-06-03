@@ -3,7 +3,7 @@ import { api } from '../../lib/axios';
 import { X, Printer, Download, FileSpreadsheet, Loader2 } from 'lucide-react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 
 interface CashReportModalProps {
     sessionId: string;
@@ -130,8 +130,11 @@ export default function CashReportModal({ sessionId, onClose }: CashReportModalP
         doc.save(`Reporte_Caja_${sessionData.id.substring(0, 8)}.pdf`);
     };
 
-    const exportExcel = () => {
-        // Build rows for the summary
+    const exportExcel = async () => {
+        const workbook = new ExcelJS.Workbook();
+        
+        // Hoja 1: Resumen
+        const wsSummary = workbook.addWorksheet('Resumen');
         const summaryData = [
             ['Concepto', 'Monto'],
             ['Fondo de Apertura (Efectivo)', Number(sessionData.openingBalance)],
@@ -150,24 +153,41 @@ export default function CashReportModal({ sessionId, onClose }: CashReportModalP
             summaryData.push(['Descuadre Calculado', Number(sessionData.discrepancy)]);
         }
 
-        const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
+        wsSummary.addRows(summaryData);
+        wsSummary.getRow(1).font = { bold: true };
 
-        // Build rows for transactions
-        const txData = transactions.map((t: any) => ({
-            Fecha: new Date(t.date).toLocaleString(),
-            Tipo: t.type,
-            Monto: Number(t.amount),
-            Descripción: t.description,
-            Referencia: t.reference
-        }));
-        const wsTx = XLSX.utils.json_to_sheet(txData);
+        // Hoja 2: Transacciones
+        const wsTx = workbook.addWorksheet('Transacciones');
+        wsTx.columns = [
+            { header: 'Fecha', key: 'fecha', width: 22 },
+            { header: 'Tipo', key: 'tipo', width: 12 },
+            { header: 'Monto', key: 'monto', width: 12 },
+            { header: 'Descripción', key: 'descripcion', width: 25 },
+            { header: 'Referencia', key: 'referencia', width: 20 },
+        ];
+        wsTx.getRow(1).font = { bold: true };
 
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, wsSummary, "Resumen");
-        XLSX.utils.book_append_sheet(wb, wsTx, "Transacciones");
+        transactions.forEach((t: any) => {
+            wsTx.addRow({
+                fecha: new Date(t.date).toLocaleString(),
+                tipo: t.type,
+                monto: Number(t.amount),
+                descripcion: t.description || '',
+                referencia: t.reference || ''
+            });
+        });
 
-        XLSX.writeFile(wb, `Reporte_Caja_${sessionData.id.substring(0, 8)}.xlsx`);
+        // Generar buffer y descargar
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const url = window.URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = `Reporte_Caja_${sessionData.id.substring(0, 8)}.xlsx`;
+        anchor.click();
+        window.URL.revokeObjectURL(url);
     };
+
 
     const generatePrintable = () => {
         // Generic browser print action.
